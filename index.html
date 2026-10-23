@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mind Over Milestones — Enhanced v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script>
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.worker.min.js';}
+</script>
+<style>
+:root{
+  --frame:#232F72; --card:#fff; --ink:#1c2764; --soft:#4a5c9e;
+  --pink:#2f9bf2; --pink-soft:#bfe3ff; --mint:#c4f0ff; --sky:#a6d9ff; --lav:#d3e4ff; --sun:#e3f5ff;
+  --shadow:rgba(35,47,114,.38); --shine:rgba(255,255,255,.75);
+  --sky-top:#7cc8ff; --sky-mid:#b9e3ff; --sky-low:#e6f6ff;
+  --r-lg:26px; --r-md:20px;
+  box-sizing:border-box; padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark; --card:#141f4d; --ink:#e4f3ff; --soft:#a9c6f0;
+    --pink:#5ab9ff; --pink-soft:#2b3f86; --mint:#1d4a7a; --sky:#245a8f; --lav:#2d3f7a; --sun:#1f4b78;
+    --shadow:rgba(0,0,0,.45); --shine:rgba(160,215,255,.35);
+    --sky-top:#16246a; --sky-mid:#1d3a85; --sky-low:#25508f;
+  }
+}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0; min-height:100vh; font-family:'Nunito',system-ui,sans-serif; color:var(--ink); background:var(--sky-mid)}
+body::before{content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,var(--shine) 50%,transparent 65%) 0 0/250% 100%,linear-gradient(180deg,var(--sky-top),var(--sky-mid) 45%,var(--sky-low));
+  opacity:.3; mix-blend-mode:soft-light; animation:shimmer 7s linear infinite;}
+@keyframes shimmer{from{background-position:150% 0,0 0}to{background-position:-100% 0,0 0}}
+h1,h2,h3{font-family:'Baloo 2',cursive; margin:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
+.cloud{opacity:.8; position:fixed; width:130px; height:46px; background:#fff; border-radius:99px; box-shadow:0 0 0 5px var(--pink-soft); z-index:-1; pointer-events:none}
+.cloud:before{content:''; position:absolute; left:22px; top:-26px; width:56px; height:56px; background:#fff; border-radius:50%; box-shadow:0 0 0 5px var(--pink-soft)}
+.cloud.a{top:calc(70px + env(safe-area-inset-top,0px)); left:-30px}
+.cloud.b{top:calc(240px + env(safe-area-inset-top,0px)); right:-40px; transform:scale(.8)}
+.app{max-width:520px; margin:0 auto; padding:14px 14px 40px; position:relative}
+.top{border:5px solid var(--frame); border-bottom:0; border-radius:var(--r-lg) var(--r-lg) 0 0; overflow:hidden; background:var(--card); box-shadow:0 8px 20px var(--shadow)}
+.hero{display:block; width:106%; height:auto; margin-left:-3%; transform:scale(1.02); transform-origin:center}
+main{background:color-mix(in srgb,var(--card) 88%,transparent); border:5px solid var(--frame); border-top:0; border-radius:0 0 28px 28px; padding:16px 14px 6px; box-shadow:0 10px 30px var(--shadow)}
+.xp{display:flex; align-items:center; gap:10px; padding:8px 14px; font-weight:700; font-size:14px; background:var(--card)}
+.bar{flex:1; height:14px; background:var(--pink-soft); border-radius:99px; overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--pink),#8fdcff,var(--pink)) 0 0/200% 100%; animation:flow 3s linear infinite; border-radius:99px; transition:width .5s}
+.card{background:var(--card); border-radius:var(--r-lg); padding:18px; margin-bottom:16px; box-shadow:0 6px 0 var(--pink-soft)}
+.hello{background:linear-gradient(135deg,var(--lav),var(--pink-soft),var(--lav)) 0 0/200% 100%; animation:flow 8s linear infinite; border-radius:var(--r-lg); padding:18px; margin-bottom:16px}
+.hello h2{font-size:22px}
+.banner{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 16px; padding:18px 16px; border:4px solid #fff; border-radius:22px; background:linear-gradient(120deg,var(--pink-soft),var(--lav) 40%,var(--sky) 70%,var(--pink-soft)) 0 0/200% 100%; animation:flow 8s linear infinite; box-shadow:0 6px 0 var(--pink-soft)}
+.banner h2{font-size:30px; line-height:1; color:var(--pink); -webkit-text-stroke:1px #fff; paint-order:stroke fill; text-shadow:0 3px 0 #fff}
+.banner .ch{font-size:56px; line-height:1}
+.btn{border:0; background:var(--pink); color:#fff; font:700 16px 'Baloo 2'; padding:10px 20px; border-radius:99px; cursor:pointer; box-shadow:0 4px 0 #1c6fbf}
+.btn:disabled{opacity:.45; cursor:not-allowed; box-shadow:none; transform:translateY(4px)}
+.btn.alt{background:var(--sky); color:var(--ink); box-shadow:0 4px 0 #8fc3ec}
+.btn.green{background:#4ec98a; box-shadow:0 4px 0 #2e9b64}
+.btn.purple{background:#9b7cf0; box-shadow:0 4px 0 #6f4fd0}
+.back{border:0; background:var(--card); color:var(--ink); font:700 15px 'Nunito'; padding:8px 16px; margin-bottom:14px; border-radius:99px; cursor:pointer; box-shadow:0 4px 0 var(--pink-soft)}
+.moods{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.moods button{font-size:26px; padding:6px 10px; border:3px solid transparent; border-radius:18px; background:var(--card); cursor:pointer}
+.moods button[aria-pressed=true]{border-color:var(--pink); transform:scale(1.1)}
+.quest{display:flex; align-items:center; gap:10px; padding:8px 0}
+.quest input{width:22px; height:22px; accent-color:var(--pink)}
+.grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+.tile{display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 4px 10px; border:0; border-radius:var(--r-lg); background:linear-gradient(160deg,#fff,var(--card)); color:var(--ink); font:800 14px 'Baloo 2'; cursor:pointer; box-shadow:0 6px 0 var(--pink-soft),0 10px 18px var(--shadow); transition:transform .15s}
+.tile:active{transform:translateY(4px); box-shadow:0 2px 0 var(--pink-soft)}
+.tile .e{display:grid; place-items:center; width:58px; height:58px; font-size:34px; border-radius:50%; box-shadow:inset 0 -5px 10px #ffffff99,inset 0 4px 8px #fff}
+.tile small{font:600 10px 'Nunito'; color:var(--soft)}
+.t1 .e,.t6 .e{background:var(--pink-soft)} .t2 .e{background:var(--mint)} .t3 .e{background:var(--lav)} .t4 .e{background:var(--sky)} .t5 .e{background:var(--sun)}
+.games{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 10px}
+.game{display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; border:0; border-radius:var(--r-md); background:linear-gradient(135deg,#c9e8ff,#e8f6ff,#b5dcff) 0 0/200% 100%; animation:flow 6s linear infinite; color:var(--ink); font:700 14px 'Baloo 2'; cursor:pointer; box-shadow:0 5px 0 var(--pink-soft)}
+.game .play{display:grid; place-items:center; width:42px; height:42px; border:3px solid #fff; border-radius:50%; background:var(--pink); color:#fff; font-size:18px}
+.game small{font:600 11px 'Nunito'; color:var(--soft)}
+.opts{display:grid; gap:8px; margin-top:10px}
+.opts button{text-align:left; padding:10px 14px; border:2px solid var(--pink-soft); border-radius:16px; background:var(--card); color:var(--ink); font:700 15px 'Nunito'; cursor:pointer}
+.opts .ok{background:#c6f2dc; border-color:#5ec9a0}
+.opts .no{background:#ffd0da; border-color:#f08aa0}
+.tech{display:grid; gap:10px}
+.tech details{padding:12px 16px; border-radius:var(--r-md); background:var(--card); box-shadow:0 4px 0 var(--pink-soft)}
+.tech summary{font:800 17px 'Baloo 2'; cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px}
+.tech summary::-webkit-details-marker{display:none}
+.tech summary .tut-btn{margin-left:auto; font:700 12px 'Nunito'; padding:5px 12px; border-radius:99px; background:var(--pink); color:#fff; border:0; cursor:pointer; box-shadow:0 3px 0 #1c6fbf}
+.tech p{margin:8px 0 0; color:var(--soft)}
+.breath{display:grid; place-items:center; width:130px; height:130px; margin:14px auto; border-radius:50%; background:radial-gradient(circle,#fff,var(--pink-soft)); color:var(--ink); font:800 18px 'Baloo 2'; transition:transform 4s ease-in-out}
+.breath.in{transform:scale(1.4)}
+.todo{display:flex; gap:8px; margin-bottom:12px}
+.todo input[type=text],textarea{flex:1; padding:10px 12px; border:2px solid var(--pink-soft); border-radius:16px; background:var(--card); color:var(--ink); font:600 15px 'Nunito'}
+textarea{width:100%; min-height:110px; resize:vertical}
+.item{display:flex; align-items:center; gap:10px; padding:6px 0}
+.item input{width:20px; height:20px; accent-color:var(--pink)}
+.item.done span{text-decoration:line-through; opacity:.55}
+.timer{text-align:center; color:var(--pink); font:800 44px 'Baloo 2'}
+.notes{display:block}
+.n-list,.n-edit{background:var(--card); border-radius:var(--r-lg); padding:16px; box-shadow:0 6px 0 var(--pink-soft)}
+.n-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+.n-head h2{font-size:26px}
+.n-head .btn{padding:6px 16px; font-size:15px}
+.notes input[type=search]{width:100%; padding:9px 14px; border:2px solid var(--pink-soft); border-radius:99px; background:var(--sun); color:var(--ink); font:600 14px 'Nunito'; margin-bottom:10px}
+.n-items{display:grid; gap:2px; max-height:60vh; overflow:auto}
+.n-row{display:block; width:100%; text-align:left; border:0; background:transparent; color:var(--ink); padding:10px 12px; border-radius:14px; cursor:pointer; font:inherit; border-bottom:1px solid var(--pink-soft)}
+.n-row b{display:block; font:800 16px 'Baloo 2'; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.n-row span{display:block; font-size:13px; color:var(--soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.n-row.on{background:var(--pink-soft)}
+.n-count{margin:10px 0 0; text-align:center; font-size:12px; color:var(--soft)}
+.n-bar{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
+.n-back{margin:0; padding:6px 14px; background:var(--sun)}
+.n-del{border:0; background:var(--sun); color:var(--ink); font:700 14px 'Nunito'; padding:6px 12px; border-radius:99px; cursor:pointer}
+.n-del.sure{background:#ffd0da}
+.n-date{margin:0 0 6px; text-align:center; font-size:12px; color:var(--soft)}
+.notes .n-fields #ntitle{width:100%; border:0; border-bottom:2px solid var(--pink-soft); background:transparent; color:var(--ink); font:800 24px 'Baloo 2'; padding:4px 2px 8px; margin-bottom:8px; outline:0}
+.notes .n-fields textarea{display:block; width:100%; min-height:48vh; border:0; border-radius:0; background:repeating-linear-gradient(transparent 0 27px,var(--pink-soft) 27px 28px); color:var(--ink); font:600 16px/28px 'Nunito'; padding:0 2px; resize:vertical; outline:0}
+.n-empty{display:none; text-align:center; color:var(--soft); padding:40px 10px; font-weight:700}
+.notes.none .n-fields,.notes.none .n-bar{display:none}
+.notes.none .n-empty{display:block}
+.notes.none .n-edit{display:none}
+.notes.editing .n-list{display:none}
+.notes:not(.editing) .n-edit{display:none}
+.notes.editing .n-edit{display:block}
+.stickers{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; text-align:center}
+.stickers div{padding:10px 0; font-size:34px; border-radius:var(--r-md); background:var(--lav)}
+.stickers div.lock{filter:grayscale(1); opacity:.35}
+.toast{position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,120px); padding:10px 18px; border-radius:99px; background:var(--ink); color:var(--card); font-weight:700; transition:transform .3s; z-index:200}
+.toast.on{transform:translate(-50%,0)}
+/* WORD QUEST */
+.wq-steps{display:flex; gap:6px; margin-bottom:14px}
+.wq-step{flex:1; text-align:center; font:700 12px 'Nunito'; padding:6px 4px; border-radius:99px; background:var(--pink-soft); color:var(--soft)}
+.wq-step.on{background:var(--pink); color:#fff}
+.topic-box textarea{width:100%; min-height:120px; margin-top:8px}
+.topic-box input[type=text]{width:100%; padding:9px 12px; border:2px solid var(--pink-soft); border-radius:14px; background:var(--card); color:var(--ink); font:700 15px 'Nunito'; margin-bottom:8px}
+.sample-chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; align-items:center}
+.sample-chips button{font:700 12px 'Nunito'; padding:5px 12px; border-radius:99px; border:2px solid var(--pink-soft); background:var(--sun); color:var(--ink); cursor:pointer}
+.file-row{display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap}
+.file-row label{font:700 13px 'Nunito'; padding:8px 14px; border-radius:99px; background:var(--lav); color:var(--ink); cursor:pointer; box-shadow:0 3px 0 #a8bff0}
+.count-row{display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap}
+.count-row label{font:700 13px 'Nunito'; color:var(--soft)}
+.count-row input[type=range]{flex:1; accent-color:var(--pink)}
+.count-val{font:800 16px 'Baloo 2'; color:var(--pink); min-width:32px; text-align:center}
+.mode-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+.mode-card{padding:14px 10px; border:3px solid var(--pink-soft); border-radius:18px; background:var(--card); cursor:pointer; text-align:center; transition:transform .15s}
+.mode-card:hover{transform:translateY(-3px); border-color:var(--pink)}
+.mode-card .m-icon{font-size:32px}
+.mode-card b{display:block; font-family:'Baloo 2'; font-size:15px; margin-top:4px}
+.mode-card small{color:var(--soft); font-size:11px}
+.wq-play .prompt{font:800 16px 'Baloo 2'; text-align:center; margin:10px 0; min-height:56px; display:grid; place-items:center}
+.wq-play .scrambled{font:800 30px 'Baloo 2'; letter-spacing:6px; color:var(--pink); text-align:center; padding:14px; background:var(--sun); border-radius:16px; margin:10px 0}
+.wq-play input[type=text]{width:100%; padding:12px; border:3px solid var(--pink-soft); border-radius:14px; font:700 16px 'Nunito'; text-align:center; background:var(--card); color:var(--ink)}
+.wq-play .feedback{text-align:center; font-weight:700; min-height:24px; margin-top:8px}
+.wq-play .feedback.ok{color:#2e9b64}
+.wq-play .feedback.no{color:#d04a6a}
+.match-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+.match-grid button{padding:10px; border:2px solid var(--pink-soft); border-radius:14px; background:var(--card); color:var(--ink); font:700 13px 'Nunito'; cursor:pointer; min-height:52px}
+.match-grid button.sel{border-color:var(--pink); background:var(--pink-soft)}
+.match-grid button.ok{background:#c6f2dc; border-color:#5ec9a0}
+.match-grid button.no{background:#ffd0da; border-color:#f08aa0}
+.tutor-bubble{display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:12px; background:var(--lav); border-radius:18px 18px 18px 4px}
+.tutor-bubble .avatar{width:40px; height:40px; border-radius:50%; background:var(--pink); display:grid; place-items:center; font-size:22px; flex-shrink:0}
+.tutor-bubble p{margin:0; font:600 13px 'Nunito'; color:var(--ink)}
+.wq-progress{display:flex; justify-content:space-between; font:700 13px 'Nunito'; color:var(--soft); margin-top:10px}
+/* TUTOR MODAL */
+.modal-overlay{display:none; position:fixed; inset:0; background:rgba(20,30,80,.55); z-index:100; padding:20px 12px; overflow-y:auto; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px)}
+.modal-overlay.on{display:block; animation:fadeIn .25s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{max-width:560px; margin:0 auto; background:var(--card); border-radius:24px; padding:20px 18px; box-shadow:0 20px 50px rgba(0,0,0,.35); animation:pop .35s cubic-bezier(.2,.9,.3,1.1) both}
+.modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+.modal-head h2{font-size:20px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.modal-close{border:0; background:var(--sun); width:36px; height:36px; border-radius:50%; font-size:18px; cursor:pointer; color:var(--ink); flex-shrink:0}
+.modal-body{max-height:62vh; overflow-y:auto; padding-right:4px}
+.modal-body h3{font-size:16px; margin:14px 0 6px}
+.modal-body p{color:var(--soft); font-size:13px; margin:6px 0}
+.modal-body .gen-area{background:var(--sun); border-radius:16px; padding:14px; margin-top:10px; max-height:280px; overflow-y:auto; font-size:13px; line-height:1.6}
+.modal-body .gen-area .qa-item{margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed var(--pink-soft)}
+.modal-body .gen-area .qa-item:last-child{border-bottom:0; margin-bottom:0; padding-bottom:0}
+.modal-body .gen-area b{color:var(--ink)}
+.modal-foot{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; justify-content:flex-end}
+.dropzone{border:3px dashed var(--pink); border-radius:16px; padding:18px; text-align:center; background:var(--sun); cursor:pointer; margin-top:10px; transition:background .2s}
+.dropzone.drag{background:var(--pink-soft)}
+.dropzone .dz-icon{font-size:32px}
+.dropzone p{margin:4px 0 0; font:700 12px 'Nunito'; color:var(--soft)}
+.dropzone .dz-file{font:700 13px 'Nunito'; color:var(--pink); margin-top:6px}
+.pomodoro-display{text-align:center; font:800 44px 'Baloo 2'; color:var(--pink); margin:10px 0}
+.pomo-phase{text-align:center; font:700 15px 'Nunito'; color:var(--soft); margin-bottom:8px}
+.pomo-controls{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+.pomo-settings{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+.pomo-settings label{font:700 12px 'Nunito'; color:var(--soft)}
+.pomo-settings input{width:100%; padding:8px; border:2px solid var(--pink-soft); border-radius:12px; background:var(--card); color:var(--ink); font:700 14px 'Nunito'; text-align:center}
+.flashcard{perspective:800px; margin:10px 0; cursor:pointer}
+.flashcard-inner{position:relative; width:100%; min-height:130px; transition:transform .5s; transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flashcard .fc-face{position:absolute; inset:0; backface-visibility:hidden; display:grid; place-items:center; padding:16px; border-radius:18px; text-align:center; font:800 16px 'Baloo 2'}
+.flashcard .fc-front{background:var(--pink-soft); color:var(--ink)}
+.flashcard .fc-back{background:var(--mint); color:var(--ink); transform:rotateY(180deg); font:600 13px 'Nunito'}
+.fc-nav{display:flex; justify-content:space-between; align-items:center; margin-top:8px; font:700 13px 'Nunito'; color:var(--soft)}
+.mindmap{display:flex; flex-direction:column; align-items:center; gap:8px; margin-top:10px}
+.mm-center{background:var(--pink); color:#fff; padding:12px 24px; border-radius:99px; font:800 15px 'Baloo 2'; max-width:90%; text-align:center}
+.mm-branches{display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%}
+.mm-branch{background:var(--lav); padding:10px; border-radius:14px; font:700 12px 'Nunito'; text-align:center}
+.mm-sub{font:600 11px 'Nunito'; color:var(--soft); display:block; margin-top:4px}
+.spaced-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px}
+.spaced-table th,.spaced-table td{border:1px solid var(--pink-soft); padding:8px; text-align:left}
+.spaced-table th{background:var(--pink-soft); font-family:'Baloo 2'}
+.topic-badge{display:inline-flex; align-items:center; gap:6px; background:var(--mint); padding:4px 12px; border-radius:99px; font:700 12px 'Nunito'; margin-bottom:8px}
+/* Answerable Q&A */
+.qa-answer{width:100%; margin-top:6px; padding:8px 10px; border:2px solid var(--pink-soft); border-radius:12px; background:var(--card); color:var(--ink); font:600 13px 'Nunito'; min-height:44px; resize:vertical}
+.qa-ref{display:none; margin-top:6px; padding:8px 10px; background:var(--lav); border-radius:10px; font:600 12px 'Nunito'; color:var(--ink)}
+.qa-ref.show{display:block}
+.qa-btns{display:flex; gap:6px; margin-top:6px; flex-wrap:wrap}
+.qa-btns button{font:700 11px 'Nunito'; padding:4px 10px; border-radius:99px; border:0; cursor:pointer}
+.qa-reveal{background:var(--sky); color:var(--ink)}
+.qa-got{background:#c6f2dc; color:#1c6b46}
+.qa-rev{background:#ffe3c2; color:#9a5a10}
+.qa-item.done-got{opacity:.6}
+.qa-item.done-got b::after{content:' ✓'; color:#2e9b64}
+.qa-item.done-rev b::after{content:' ↻'; color:#d98a2b}
+.qa-score{font:700 13px 'Nunito'; color:var(--pink); margin-top:8px; text-align:center}
+/* Interactive mind map */
+.mm-edit{display:grid; gap:8px; margin-top:10px}
+.mm-center-edit{text-align:center}
+.mm-center-edit input{width:90%; padding:8px; border:2px solid var(--pink); border-radius:99px; text-align:center; font:800 14px 'Baloo 2'; background:var(--pink-soft); color:var(--ink)}
+.mm-branches-edit{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.mm-branch-edit{display:flex; gap:4px; align-items:center}
+.mm-branch-edit input{flex:1; padding:6px 8px; border:2px solid var(--pink-soft); border-radius:10px; font:700 12px 'Nunito'; background:var(--card); color:var(--ink)}
+.mm-branch-edit button{border:0; background:var(--sun); border-radius:50%; width:24px; height:24px; cursor:pointer; font-size:12px; flex-shrink:0}
+.mm-add{font:700 12px 'Nunito'; padding:6px 14px; border-radius:99px; border:2px dashed var(--pink); background:transparent; color:var(--pink); cursor:pointer; justify-self:center}
+/* Cornell interactive */
+.cornell-grid{display:grid; grid-template-columns:1fr 2fr; gap:0; border:2px solid var(--pink); border-radius:14px; overflow:hidden; margin-top:10px}
+.cornell-grid textarea{border:0; border-right:2px solid var(--pink); padding:10px; min-height:200px; font:600 13px 'Nunito'; background:var(--card); color:var(--ink); resize:vertical; outline:0}
+.cornell-grid textarea:last-child{border-right:0}
+.cornell-summary{width:100%; margin-top:8px; padding:10px; border:2px solid var(--pink); border-radius:14px; min-height:60px; font:600 13px 'Nunito'; background:var(--card); color:var(--ink); resize:vertical; outline:0}
+.cornell-labels{display:grid; grid-template-columns:1fr 2fr; gap:0; font:700 11px 'Nunito'; color:var(--soft); margin-top:8px}
+.cornell-labels span{padding:0 4px}
+.edit-save{font:700 11px 'Nunito'; color:#2e9b64; margin-top:6px; text-align:right}
+.subj-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+.subj-chips button{font:700 13px 'Nunito'; padding:6px 14px; border-radius:99px; border:2px solid var(--pink-soft); background:var(--card); color:var(--ink); cursor:pointer}
+.subj-chips button.on{background:var(--pink); color:#fff; border-color:var(--pink)}
+.view{display:none}
+.view.on{display:block}
+@keyframes flow{from{background-position:0 0}to{background-position:200% 0}}
+@keyframes pop{from{opacity:0; transform:translateY(12px) scale(.92)}to{opacity:1; transform:none}}
+@keyframes okPop{50%{transform:scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@media (min-width:700px){
+  .app{max-width:1120px; padding:22px 28px 44px}
+  main{padding:22px 22px 10px}
+  .xp{max-width:none; padding:10px 24px}
+  #home.on{display:grid; grid-template-columns:1fr 1.5fr; gap:18px; align-items:start}
+  #home .hello,#home .card{grid-column:1; margin-bottom:0}
+  #home .grid{grid-column:2; grid-row:1/span 2; gap:16px}
+  #home .banner,#home .games{grid-column:1/-1; margin-top:0}
+  .view.on:not(#home){display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start}
+  .view.on:not(#home)>.back,.view.on:not(#home)>.banner,.view.on:not(#home)>h2,.view.on:not(#home)>.tech,.view.on:not(#home)>.wq-steps{grid-column:1/-1}
+  .view.on:not(#home)>.back{justify-self:start; margin-bottom:0}
+  .view.on:not(#home)>.card{margin-bottom:0}
+  .tile{padding:18px 6px 14px; font-size:17px}
+  .tile .e{width:72px; height:72px; font-size:42px}
+  .tile small{font-size:12px}
+  .tech{grid-template-columns:1fr 1fr}
+  .stickers{grid-template-columns:repeat(8,1fr)}
+  .banner h2{font-size:36px}
+  .banner .ch{font-size:72px}
+  .mode-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="cloud a"></div><div class="cloud b"></div>
+<div class="app">
+  <div class="top"><img src="Kindness.gif" class="hero" alt="Mind Over Milestones header"><div class="xp"><span id="lvl">Lv 1</span><div class="bar"><i id="xpbar"></i></div><span id="xptxt">0 XP</span></div></div>
+  <main>
+  <!-- HOME -->
+  <section class="view on" id="home">
+    <div class="hello"><h2 id="greet">Hi, scholar!</h2><p id="moodmsg" style="margin:6px 0 0; color:var(--soft)">How are you feeling today?</p>
+      <div class="moods" id="moods"><button aria-pressed="false">😄</button><button aria-pressed="false">🙂</button><button aria-pressed="false">😐</button><button aria-pressed="false">😔</button><button aria-pressed="false">😢</button></div>
+    </div>
+    <div class="card"><h3>Today&#8217;s Quest</h3>
+      <label class="quest"><input type="checkbox" data-xp="1"> Study: 1 round of Active Recall</label>
+      <label class="quest"><input type="checkbox" data-xp="1"> Self-care: drink water and stretch</label>
+      <label class="quest"><input type="checkbox" data-xp="1"> Play: one Word Quest round</label>
+    </div>
+    <div class="grid">
+      <button class="tile t1" data-go="learn"><span class="e">🎮</span>Learn &amp; Play<small>Word Quest + AI tutor</small></button>
+      <button class="tile t2" data-go="study"><span class="e">📚</span>Study Lab<small>9 techniques + PDF tutors</small></button>
+      <button class="tile t3" data-go="care"><span class="e">💗</span>Mind Care<small>Calm and support</small></button>
+      <button class="tile t4" data-go="planner"><span class="e">📝</span>Planner<small>To-do and timer</small></button>
+      <button class="tile t5" data-go="journal"><span class="e">📔</span>Journal<small>Private notes</small></button>
+      <button class="tile t6" data-go="rewards"><span class="e">🎀</span>Rewards<small>Stickers and streaks</small></button>
+    </div>
+    <div class="banner"><h2>Wellness<br>Guidelines</h2><span class="ch" aria-hidden="true">🌷</span></div>
+    <div class="games">
+      <button class="game" data-go="learn"><span class="play">▶</span>Game 01 · Word Quest<small>AI tutor · your topic</small></button>
+      <button class="game" data-go="game2"><span class="play">▶</span>Game 02 · Math &amp; Science<small>Quiz battle · 35 max</small></button>
+    </div>
+  </section>
+
+  <!-- LEARN / WORD QUEST (Game 01) -->
+  <section class="view" id="learn">
+    <button class="back" data-go="home">← Home</button>
+    <div class="wq-steps">
+      <div class="wq-step on" id="ws1">1 · Topic</div>
+      <div class="wq-step" id="ws2">2 · Mode</div>
+      <div class="wq-step" id="ws3">3 · Play</div>
+    </div>
+    <div class="card topic-box" id="wq-topic">
+      <h2>📖 Choose your topic</h2>
+      <p style="color:var(--soft); margin:6px 0 0">Paste lesson/PPT text, or upload a file (.txt / .pdf / .docx). The AI tutor builds word games from it.</p>
+      <input type="text" id="topicTitle" placeholder="Topic title (e.g. Photosynthesis)">
+      <textarea id="topicText" placeholder="Paste your study text here…"></textarea>
+      <div class="file-row">
+        <label for="topicFile">📎 Upload file</label>
+        <input type="file" id="topicFile" accept=".txt,.md,.text,.pdf,.docx" style="display:none">
+        <span id="fileName" style="font-size:12px; color:var(--soft)">No file chosen</span>
+      </div>
+      <div class="sample-chips" id="sampleChips"><span style="font:700 12px 'Nunito'; color:var(--soft)">Try a sample:</span></div>
+      <div class="count-row"><label>Questions:</label><input type="range" id="wqCount" min="3" max="20" value="5"><span class="count-val" id="wqCountVal">5</span></div>
+      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn green" id="saveTopic">💾 Save &amp; Continue</button>
+        <button class="btn alt" id="useSavedTopic" style="display:none">📂 Use saved topic</button>
+      </div>
+      <p id="topicStatus" style="margin-top:8px; font-size:12px; color:var(--soft)"></p>
+    </div>
+    <div class="card" id="wq-mode" style="display:none">
+      <div class="topic-badge" id="modeTopicBadge">📖 —</div>
+      <h2>🎯 Pick a game mode</h2>
+      <p style="color:var(--soft); margin:6px 0 0">Your AI tutor <b>Mika</b> guides you. Hints available anytime!</p>
+      <div class="mode-grid">
+        <div class="mode-card" data-mode="scramble"><div class="m-icon">🔤</div><b>Word Scramble</b><small>Unscramble key terms</small></div>
+        <div class="mode-card" data-mode="cloze"><div class="m-icon">✏️</div><b>Fill the Blank</b><small>Complete the sentence</small></div>
+        <div class="mode-card" data-mode="spell"><div class="m-icon">🔊</div><b>Spell Challenge</b><small>Type word from meaning</small></div>
+        <div class="mode-card" data-mode="match"><div class="m-icon">🧩</div><b>Match Pairs</b><small>Match terms to meanings</small></div>
+      </div>
+      <div style="margin-top:14px"><button class="btn alt" id="changeTopic">← Change topic</button></div>
+    </div>
+    <div class="card wq-play" id="wq-play" style="display:none">
+      <div class="wq-progress"><span id="wqQnum">Q 1/5</span><span id="wqScore">⭐ 0</span></div>
+      <div id="playArea"></div>
+      <div class="feedback" id="wqFeedback"></div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center">
+        <button class="btn alt" id="wqHint">💡 Hint</button>
+        <button class="btn alt" id="wqSkip">Skip →</button>
+        <button class="btn alt" id="wQuit">✕ Quit</button>
+      </div>
+      <div class="tutor-bubble"><div class="avatar">🦉</div><p id="tutorMsg">Hi! I am Mika, your AI tutor. I built these from YOUR topic. Take your time!</p></div>
+    </div>
+    <div class="card" id="wq-result" style="display:none; text-align:center">
+      <div style="font-size:56px">🏆</div>
+      <h2 id="resultTitle">Round complete!</h2>
+      <p id="resultScore" style="font:800 22px 'Baloo 2'; color:var(--pink); margin:8px 0"></p>
+      <p id="resultMsg" style="color:var(--soft)"></p>
+      <div style="margin-top:14px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap">
+        <button class="btn green" id="playAgain">🔁 Play again</button>
+        <button class="btn alt" id="newMode">🎯 Other mode</button>
+        <button class="btn alt" data-go="home">🏠 Home</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME 02: MATH & SCIENCE -->
+  <section class="view" id="game2">
+    <button class="back" data-go="home">← Home</button>
+    <div class="card" id="g2-setup">
+      <h2>🔬 Math &amp; Science Quiz</h2>
+      <p style="color:var(--soft); margin:6px 0 0">A fresh set of questions every time you play. Choose subject and number of questions.</p>
+      <div class="subj-chips" id="g2Subj">
+        <button data-subj="Math" class="on">➗ Math</button>
+        <button data-subj="Science">🧪 Science</button>
+        <button data-subj="Mixed">🎲 Mixed</button>
+      </div>
+      <div class="count-row"><label>Questions (max 35):</label><input type="range" id="g2Count" min="5" max="35" value="10"><span class="count-val" id="g2CountVal">10</span></div>
+      <div style="margin-top:14px; text-align:center"><button class="btn green" id="g2Start">🚀 Start Quiz</button></div>
+    </div>
+    <div class="card wq-play" id="g2-play" style="display:none">
+      <div class="wq-progress"><span id="g2Qnum">Q 1/10</span><span id="g2Score">⭐ 0</span></div>
+      <div class="prompt" id="g2Qtext"></div>
+      <div class="opts" id="g2Opts"></div>
+      <div class="feedback" id="g2Feedback"></div>
+      <div style="margin-top:10px; text-align:center"><button class="btn alt" id="g2Quit">✕ Quit</button></div>
+    </div>
+    <div class="card" id="g2-result" style="display:none; text-align:center">
+      <div style="font-size:56px">🎓</div>
+      <h2>Quiz complete!</h2>
+      <p id="g2ResultScore" style="font:800 22px 'Baloo 2'; color:var(--pink); margin:8px 0"></p>
+      <p id="g2ResultMsg" style="color:var(--soft)"></p>
+      <div style="margin-top:14px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap">
+        <button class="btn green" id="g2Again">🔁 New quiz</button>
+        <button class="btn alt" data-go="home">🏠 Home</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDY LAB -->
+  <section class="view" id="study">
+    <button class="back" data-go="home">← Home</button>
+    <h2 style="margin-bottom:4px">📚 Study Lab</h2>
+    <p style="color:var(--soft); margin:0 0 12px; font-size:13px">9 techniques. Open any tutor → upload your PDF/Word/TXT → choose 1–60 questions → generate &amp; download PDF.</p>
+    <div class="tech" id="techList"></div>
+  </section>
+
+  <!-- CARE -->
+  <section class="view" id="care">
+    <button class="back" data-go="home">← Home</button>
+    <div class="banner"><h2>Wellness<br>Hub</h2><span class="ch" aria-hidden="true">💗</span></div>
+    <div class="card"><h2>Breathe</h2><div class="breath" id="breath">Ready</div><div style="text-align:center"><button class="btn" id="bstart">Start breathing</button></div></div>
+    <div class="card"><h3>5-4-3-2-1 Grounding</h3><p style="color:var(--soft)">Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.</p><button class="btn alt" data-xp="1" data-toast="Grounding done! +15 XP">I did it</button></div>
+    <div class="card"><h3>Need help?</h3><p style="margin:6px 0 0">If things feel too heavy, talk to someone you trust, your school guidance counselor, or call the NCMH Crisis Hotline at <b>1553</b> (Philippines).</p></div>
+  </section>
+
+  <!-- PLANNER -->
+  <section class="view" id="planner">
+    <button class="back" data-go="home">← Home</button>
+    <div class="card"><h2>To-do</h2><div class="todo"><input type="text" id="tin" placeholder="Add a task"><button class="btn" id="tadd">Add</button></div><div id="tlist"></div><div class="xp"><div class="bar"><i id="tbar"></i></div><span id="tpct">0%</span></div></div>
+    <div class="card"><h3>Study timer</h3><div class="timer" id="clock">25:00</div><div style="text-align:center;display:flex;flex-wrap:wrap;gap:10px;justify-content:center"><button class="btn" id="cgo">Start</button><button class="btn alt" id="cstop" disabled>Stop</button><button class="btn alt" id="crestart">Restart</button></div></div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section class="view" id="journal">
+    <button class="back" data-go="home">← Home</button>
+    <div class="notes none" id="notes">
+      <div class="n-list"><div class="n-head"><h2>Notes</h2><button class="btn" id="nnew">＋ New</button></div><input type="search" id="nsearch" placeholder="Search notes"><div class="n-items" id="nitems"></div><p class="n-count" id="ncount"></p></div>
+      <div class="n-edit"><div class="n-bar"><button class="back n-back" id="nback">‹ Notes</button><button class="n-del" id="ndel">🗑️</button></div><div class="n-fields"><p class="n-date" id="ndate"></p><input type="text" id="ntitle" placeholder="Title" maxlength="80"><textarea id="nbody" placeholder="Start writing…"></textarea></div><p class="n-empty">📔 Select a note or tap ＋ New.<br><small>Only you can see your notes.</small></p></div>
+    </div>
+  </section>
+
+  <!-- REWARDS -->
+  <section class="view" id="rewards">
+    <button class="back" data-go="home">← Home</button>
+    <div class="card"><h2>Affirmation stickers</h2><p style="color:var(--soft)">Earn XP to unlock more. Tap a sticker to read it.</p><div class="stickers" id="stick"></div><p id="stickmsg" style="font-weight:700;min-height:24px"></p></div>
+  </section>
+  </main>
+</div>
+
+<!-- TUTOR MODAL -->
+<div class="modal-overlay" id="tutorModal">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modalTitle">Tutor</h2><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn alt" id="modalRegen">🔄 Regenerate</button>
+      <button class="btn green" id="modalPdf">📄 Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== CORE ===== */
+let xp=0;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const stickers=[["🌸","I am growing at my own pace."],["⭐","Small steps count."],["🐰","Rest is part of the plan."],["💪","I can do hard things."],["🌈","Mistakes help me learn."],["🍀","I am proud of my effort."],["🦋","Today is a fresh start."],["👑","I deserve kindness, too."]];
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2000)}
+function addXP(n){xp+=n;const l=Math.floor(xp/20)+1;$('#lvl').textContent='Lv '+l;$('#xptxt').textContent=xp+' XP';$('#xpbar').style.width=(xp%20)+'%';drawStickers()}
+const canVT=!!document.startViewTransition&&!matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(canVT)document.documentElement.classList.add('vt');
+function go(id){const c=$('.view.on');if(c&&c.id===id)return;const swap=()=>{$$('.view').forEach(v=>v.classList.toggle('on',v.id===id));scrollTo(0,0)};if(canVT){document.documentElement.dataset.dir=id==='home'?'back':'fwd';document.startViewTransition(swap)}else swap()}
+$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+$$('input[data-xp]').forEach(c=>c.onchange=()=>{if(c.checked){addXP(+c.dataset.xp);toast('Quest done! +'+c.dataset.xp+' XP')}});
+$$('button[data-xp]').forEach(b=>b.onclick=()=>{addXP(+b.dataset.xp);toast(b.dataset.toast)});
+const msgs=["Yay! Keep that sparkle going.","Nice and steady. Let us study gently.","Go easy today. Try a short Pomodoro.","Take a breath first. Mind Care is ready for you.","It is okay to feel low. Try Mind Care or talk to someone you trust."];
+$$('#moods button').forEach((b,i)=>b.onclick=()=>{$$('#moods button').forEach(x=>x.setAttribute('aria-pressed',x===b));const m=$('#moodmsg');m.textContent=msgs[i];if(!b.dataset.d){b.dataset.d=1;addXP(1)}});
+let bt;$('#bstart').onclick=()=>{const b=$('#breath');clearInterval(bt);let on=false;const tick=()=>{on=!on;b.classList.toggle('in',on);b.textContent=on?'Breathe in':'Breathe out'};tick();bt=setInterval(tick,4000);setTimeout(()=>{clearInterval(bt);b.classList.remove('in');b.textContent='Well done';addXP(1);toast('+15 XP for breathing')},24000)};
+let todos=[];function drawTodo(){const l=$('#tlist');l.innerHTML='';todos.forEach(t=>{const d=document.createElement('label');d.className='item'+(t.d?' done':'');d.innerHTML='<input type="checkbox"'+(t.d?' checked':'')+'><span></span>';d.querySelector('span').textContent=t.t;d.querySelector('input').onchange=e=>{t.d=e.target.checked;if(t.d)addXP(1);drawTodo()};l.append(d)});const p=todos.length?Math.round(todos.filter(t=>t.d).length/todos.length*10):0;$('#tbar').style.width=p+'%';$('#tpct').textContent=p+'%'}
+$('#tadd').onclick=()=>{const v=$('#tin').value.trim();if(v){todos.push({t:v,d:false});$('#tin').value='';drawTodo()}};
+$('#tin').onkeydown=e=>{if(e.key==='Enter')$('#tadd').click()};
+let ct,secs=1500;
+function showClock(){$('#clock').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0')}
+function setTimerUI(r){$('#cgo').disabled=r;$('#cstop').disabled=!r;$('#cgo').textContent=(!r&&secs<1500&&secs>0)?'Resume':'Start'}
+$('#cgo').onclick=()=>{if(secs<=0)secs=1500;showClock();clearInterval(ct);setTimerUI(true);ct=setInterval(()=>{secs--;showClock();if(secs<=0){clearInterval(ct);secs=1500;setTimerUI(false);addXP(1);toast('Focus session done! +25 XP')}},1000)};
+$('#cstop').onclick=()=>{clearInterval(ct);setTimerUI(false)};
+$('#crestart').onclick=()=>{clearInterval(ct);secs=1500;showClock();$('#cgo').click()};
+let notes=[],cur=null,delT;
+try{notes=JSON.parse(localStorage.getItem('mom-notes')||'[]')}catch(e){}
+const saveNotes=()=>{try{localStorage.setItem('mom-notes',JSON.stringify(notes))}catch(e){}};
+const nfmt=t=>{const d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric'})};
+const nfull=t=>new Date(t).toLocaleString([],{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+const getNote=()=>notes.find(n=>n.id===cur);
+function drawNotes(){const q=$('#nsearch').value.trim().toLowerCase(),box=$('#nitems');box.innerHTML='';const list=notes.filter(n=>!q||(n.t+' '+n.b).toLowerCase().includes(q)).sort((a,b)=>b.u-a.u);list.forEach(n=>{const r=document.createElement('button');r.className='n-row'+(n.id===cur?' on':'');const b=document.createElement('b'),sp=document.createElement('span');b.textContent=n.t.trim()||'New note';sp.textContent=nfmt(n.u);r.append(b,sp);r.onclick=()=>openNote(n.id);box.append(r)});if(!list.length){const p=document.createElement('p');p.className='n-count';p.textContent=q?'No matching notes.':'No notes yet.';box.append(p)}$('#ncount').textContent=notes.length?notes.length+' notes':''}
+function openNote(id){cur=id;const n=getNote();$('#ntitle').value=n.t;$('#nbody').value=n.b;$('#ndate').textContent=nfull(n.u);const el=$('#notes');el.classList.remove('none');el.classList.add('editing');resetDel();drawNotes()}
+function closeNote(){const n=getNote();if(n&&!n.t.trim()&&!n.b.trim())notes=notes.filter(x=>x!==n);cur=null;$('#notes').classList.remove('editing');$('#notes').classList.add('none');saveNotes();drawNotes()}
+function resetDel(){clearTimeout(delT);$('#ndel').classList.remove('sure');$('#ndel').textContent='🗑️'}
+function touchNote(){const n=getNote();if(!n)return;n.t=$('#ntitle').value;n.b=$('#nbody').value;n.u=Date.now();$('#ndate').textContent=nfull(n.u);if(!n.x&&(n.t+n.b).trim()){n.x=true;addXP(1);toast('Note saved. +10 XP')}saveNotes();drawNotes()}
+$('#nnew').onclick=()=>{$('#nsearch').value='';const n={id:Date.now(),t:'',b:'',u:Date.now(),x:false};notes.unshift(n);openNote(n.id);$('#ntitle').focus()};
+$('#nback').onclick=closeNote;$('#ntitle').oninput=touchNote;$('#nbody').oninput=touchNote;
+$('#ntitle').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#nbody').focus()}};
+$('#nsearch').oninput=drawNotes;
+$('#ndel').onclick=()=>{const b=$('#ndel');if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Tap again to delete';delT=setTimeout(resetDel,3000);return}notes=notes.filter(n=>n.id!==cur);cur=null;$('#notes').classList.remove('editing');$('#notes').classList.add('none');resetDel();saveNotes();drawNotes();toast('Note deleted')};
+drawNotes();
+function drawStickers(){const s=$('#stick');s.innerHTML='';stickers.forEach((x,i)=>{const d=document.createElement('div');const open=xp>=i*5;d.className=open?'':'lock';d.textContent=x[0];d.onclick=()=>{$('#stickmsg').textContent=open?x[1]:'Unlocks at '+i*5+' XP'};s.append(d)})}
+drawStickers();
+
+/* ===== FILE PARSER (PDF / DOCX / TXT) ===== */
+async function parseFile(file){
+  const name=file.name.toLowerCase();
+  if(name.endsWith('.txt')||name.endsWith('.md')||name.endsWith('.text'))return await file.text();
+  if(name.endsWith('.docx')){
+    if(!window.mammoth)throw new Error('Word library not loaded');
+    const buf=await file.arrayBuffer();
+    const res=await mammoth.extractRawText({arrayBuffer:buf});
+    return res.value||'';
+  }
+  if(name.endsWith('.pdf')){
+    if(!window.pdfjsLib)throw new Error('PDF library not loaded');
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    let text='';
+    for(let i=1;i<=Math.min(pdf.numPages,30);i++){const page=await pdf.getPage(i);const tc=await page.getTextContent();text+=tc.items.map(it=>it.str).join(' ')+'\n'}
+    return text;
+  }
+  throw new Error('Unsupported file. Use .pdf, .docx, or .txt');
+}
+function setupDropzone(zoneEl, onText){
+  const input=document.createElement('input');input.type='file';input.accept='.pdf,.docx,.txt,.md,.text';input.style.display='none';
+  zoneEl.append(input);
+  zoneEl.onclick=()=>input.click();
+  input.onchange=async()=>{if(input.files[0]){await handleFile(input.files[0])}};
+  zoneEl.ondragover=e=>{e.preventDefault();zoneEl.classList.add('drag')};
+  zoneEl.ondragleave=()=>zoneEl.classList.remove('drag');
+  zoneEl.ondrop=async e=>{e.preventDefault();zoneEl.classList.remove('drag');if(e.dataTransfer.files[0])await handleFile(e.dataTransfer.files[0])};
+  async function handleFile(f){
+    const status=zoneEl.querySelector('.dz-status');if(status)status.textContent='Parsing '+f.name+'…';
+    try{const text=await parseFile(f);onText(text,f.name.replace(/\.[^.]+$/,''));if(status)status.textContent='✅ Loaded: '+f.name+' ('+text.length+' chars)'}
+    catch(err){if(status)status.textContent='⚠️ '+err.message;toast('Could not read file: '+err.message)}
+  }
+}
+
+/* ===== TOPIC / QUESTION ENGINE ===== */
+const STOPWORDS=new Set(("a an the and or but if then else of to in on at by for with from as is are was were be been being have has had do does did will would can could should may might must shall this that these those it its their his her our your my we you they he she i me us him them what which who whom whose when where why how all any both each few more most other some such no nor not only own same so than too very just about above after again against along amid among around before behind below beneath beside between beyond during except inside into like near off onto outside over past per plus regarding since through throughout toward under underneath until upon within without").split(" "));
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function processTopic(rawText,title,maxItems){
+  const text=(rawText||'').replace(/\s+/g,' ').trim();
+  const sentences=text.split(/(?<=[.!?])\s+/).filter(s=>s.trim().length>15).map(s=>s.trim());
+  const words=text.toLowerCase().replace(/[^a-z\s'-]/g,' ').split(/\s+/).filter(w=>w.length>3&&!STOPWORDS.has(w));
+  const freq={};words.forEach(w=>{freq[w]=(freq[w]||0)+1});
+  const keyTerms=Object.entries(freq).filter(([w,c])=>w.length>4).sort((a,b)=>b[1]-a[1]||b[0].length-a[0].length).slice(0,Math.max(maxItems*2,20)).map(([w])=>{
+    const cap=w.charAt(0).toUpperCase()+w.slice(1);
+    const context=sentences.find(s=>new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(s))||sentences[0]||'';
+    return {term:cap,context:context};
+  });
+  const cloze=[];
+  shuffle(sentences).slice(0,Math.min(maxItems*2,40)).forEach(s=>{
+    const ws=s.split(/\s+/);
+    const cands=ws.filter(w=>{const c=w.replace(/[^a-zA-Z]/g,'');return c.length>5&&!STOPWORDS.has(c.toLowerCase())});
+    if(cands.length){const pick=cands[Math.floor(Math.random()*cands.length)];const clean=pick.replace(/[^a-zA-Z]/g,'');cloze.push({sentence:s.replace(pick,'_____'),answer:clean,context:s})}
+  });
+  const questions=shuffle(keyTerms).slice(0,maxItems).map(kt=>({q:"Define or explain: "+kt.term,hint:kt.context?("Appears in: \""+kt.context.slice(0,90)+(kt.context.length>90?'…':'')+"\""):'',a:kt.context,term:kt.term}));
+  const mcq=shuffle(cloze).slice(0,maxItems).map(c=>{
+    const distractors=shuffle(keyTerms.filter(k=>k.term.toLowerCase()!==c.answer.toLowerCase())).slice(0,3).map(k=>k.term);
+    while(distractors.length<3)distractors.push(['Concept','Term','Idea','Process'][distractors.length]);
+    const opts=shuffle([c.answer,...distractors]);
+    return {q:c.context.replace(c.answer,'_____'),opts:opts,answer:c.answer};
+  });
+  return {title:title||'My Topic',text:text,sentences:sentences,keyTerms:keyTerms,cloze:cloze,questions:questions,mcq:mcq};
+}
+
+/* ===== SAMPLES ===== */
+const SAMPLES=[
+  {title:"Photosynthesis",text:"Photosynthesis is the process by which green plants and algae convert light energy into chemical energy stored in glucose. It occurs in chloroplasts, which contain the green pigment chlorophyll. The process has two main stages: the light-dependent reactions and the Calvin cycle. During light-dependent reactions, water molecules are split and oxygen is released as a byproduct. ATP and NADPH are produced to power the Calvin cycle. In the Calvin cycle, carbon dioxide is fixed into organic molecules using the enzyme RuBisCO. Photosynthesis is essential for life on Earth because it produces oxygen and forms the base of most food chains. Factors affecting photosynthesis include light intensity, carbon dioxide concentration, and temperature. Stomata on leaves control gas exchange and water loss."},
+  {title:"The Water Cycle",text:"The water cycle describes the continuous movement of water on Earth. Water changes state through evaporation, condensation, precipitation, and transpiration. Evaporation occurs when the sun heats water in oceans and lakes, turning it into water vapor. Transpiration is the release of water vapor from plants through their leaves. Condensation happens when water vapor cools and forms clouds. Precipitation falls as rain, snow, sleet, or hail. Runoff flows over land into rivers and oceans, while infiltration seeps into groundwater. The water cycle is driven by solar energy and gravity. It purifies water and redistributes it across the planet."},
+  {title:"Fractions Basics",text:"A fraction represents a part of a whole. It consists of a numerator and a denominator. The denominator tells how many equal parts the whole is divided into. Equivalent fractions have the same value but different numerators and denominators. To add fractions, they must have a common denominator. To multiply fractions, multiply the numerators and denominators. To divide fractions, multiply by the reciprocal. A proper fraction has a numerator smaller than the denominator. An improper fraction can be written as a mixed number."}
+];
+SAMPLES.forEach(s=>{const b=document.createElement('button');b.textContent=s.title;b.onclick=()=>{$('#topicTitle').value=s.title;$('#topicText').value=s.text;$('#topicStatus').textContent='Sample loaded: '+s.title};$('#sampleChips').append(b)});
+
+/* ===== TOPIC STATE ===== */
+let currentTopic=null;
+try{currentTopic=JSON.parse(localStorage.getItem('mom-topic')||'null')}catch(e){}
+$('#wqCount').oninput=()=>{$('#wqCountVal').textContent=$('#wqCount').value};
+$('#topicFile').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;$('#fileName').textContent=f.name+' (parsing…)';
+  try{const text=await parseFile(f);$('#topicText').value=text;if(!$('#topicTitle').value)$('#topicTitle').value=f.name.replace(/\.[^.]+$/,'');$('#fileName').textContent=f.name+' ✅';toast('File loaded: '+text.length+' chars')}
+  catch(err){$('#fileName').textContent='⚠️ '+err.message;toast(err.message)}
+};
+$('#saveTopic').onclick=()=>{
+  const title=$('#topicTitle').value.trim()||'My Topic';const text=$('#topicText').value.trim();
+  if(text.length<30){$('#topicStatus').textContent='⚠️ Paste at least 30 characters so the tutor can build good games.';return}
+  currentTopic={title:title,raw:text};
+  try{localStorage.setItem('mom-topic',JSON.stringify(currentTopic))}catch(e){}
+  goToMode();
+};
+$('#useSavedTopic').onclick=()=>{if(currentTopic)goToMode()};
+if(currentTopic){$('#useSavedTopic').style.display='inline-block';$('#topicStatus').textContent='Saved topic: '+currentTopic.title+'. Use it or paste a new one.';$('#topicTitle').value=currentTopic.title;$('#topicText').value=currentTopic.raw}
+function goToMode(){$('#wq-topic').style.display='none';$('#wq-mode').style.display='block';$('#wq-play').style.display='none';$('#wq-result').style.display='none';$('#ws1').classList.remove('on');$('#ws2').classList.add('on');$('#ws3').classList.remove('on');$('#modeTopicBadge').textContent='📖 '+(currentTopic?currentTopic.title:'—')}
+$('#changeTopic').onclick=()=>{$('#wq-topic').style.display='block';$('#wq-mode').style.display='none';$('#ws1').classList.add('on');$('#ws2').classList.remove('on');$('#ws3').classList.remove('on')};
+
+/* ===== GAME 01: WORD QUEST (FIXED) ===== */
+let wq={mode:null,items:[],idx:0,score:0,matchSel:null,matchMatched:0,count:5};
+function scrambleWord(w){if(w.length<=3)return w;let out;do{out=shuffle(w.split('')).join('')}while(out===w);return out}
+const TUTOR={start:["Let us do this! You know this.","One question at a time. You have got this.","I built these from YOUR notes — you already know more than you think."],correct:["Yes! Exactly right!","Perfect! That is it!","Great job! You really know this.","Brilliant! Keep that momentum!"],wrong:["Not quite — but that is how we learn. The answer is ","Close! Try to remember: ","Almost! The correct term is "],end:["Amazing work! You are building real memory.","Solid round! Review the ones you missed.","You get stronger every round! "]};
+const tutorSay=k=>TUTOR[k][Math.floor(Math.random()*TUTOR[k].length)];
+$$('.mode-card').forEach(c=>c.onclick=()=>startWQ(c.dataset.mode));
+function startWQ(mode){
+  if(!currentTopic){toast('Please set a topic first');return}
+  const count=+$('#wqCount').value||5;
+  const data=processTopic(currentTopic.raw,currentTopic.title,count);
+  wq={mode:mode,items:[],idx:0,score:0,matchSel:null,matchMatched:0,count:count};
+  if(mode==='scramble'){
+    const terms=shuffle(data.keyTerms.filter(k=>k.term.length>3)).slice(0,count);
+    if(!terms.length){toast('Not enough key terms found. Try more text.');return}
+    wq.items=terms.map(k=>({q:scrambleWord(k.term.toUpperCase()),a:k.term,hint:k.context?('Appears in: '+k.context.slice(0,70)+'…'):'Think of a key term'}));
+  }else if(mode==='cloze'){
+    const items=shuffle(data.cloze).slice(0,count);
+    if(!items.length){toast('Not enough sentences found. Try more text.');return}
+    wq.items=items.map(it=>({q:it.sentence,a:it.answer,hint:'The missing word has '+it.answer.length+' letters and starts with "'+it.answer[0].toUpperCase()+'"',sentence:it.sentence}));
+  }else if(mode==='spell'){
+    const terms=shuffle(data.keyTerms).slice(0,count);
+    if(!terms.length){toast('Not enough key terms. Try more text.');return}
+    wq.items=terms.map(k=>({q:k.context?('Meaning: "'+k.context.slice(0,100)+(k.context.length>100?'…':'')+'"'):'Key term in your topic',a:k.term,hint:'Starts with "'+k.term[0].toUpperCase()+'" and has '+k.term.length+' letters'}));
+  }else if(mode==='match'){
+    const terms=shuffle(data.keyTerms).slice(0,Math.min(count,6));
+    if(terms.length<2){toast('Not enough key terms. Try more text.');return}
+    wq.items=terms.map(k=>({term:k.term,def:k.context?k.context.slice(0,80)+(k.context.length>80?'…':''):'Key concept'}));
+  }
+  $('#wq-mode').style.display='none';$('#wq-play').style.display='block';$('#wq-result').style.display='none';
+  $('#ws2').classList.remove('on');$('#ws3').classList.add('on');
+  $('#tutorMsg').textContent=tutorSay('start')+' Mode: '+({scramble:'Word Scramble',cloze:'Fill the Blank',spell:'Spell Challenge',match:'Match Pairs'})[mode];
+  renderWQ();
+}
+function renderWQ(){
+  const area=$('#playArea');area.innerHTML='';
+  if(wq.mode==='match'){renderMatch(area);return}
+  const item=wq.items[wq.idx];if(!item){endWQ();return}
+  $('#wqQnum').textContent='Q '+(wq.idx+1)+'/'+wq.items.length;
+  $('#wqScore').textContent='⭐ '+wq.score;
+  $('#wqFeedback').textContent='';$('#wqFeedback').className='feedback';
+  if(wq.mode==='scramble'){area.innerHTML='<p style="text-align:center;color:var(--soft);font-size:13px">Unscramble this key term:</p><div class="scrambled">'+item.q+'</div>'}
+  else if(wq.mode==='cloze'){area.innerHTML='<p style="text-align:center;color:var(--soft);font-size:13px">Fill in the blank:</p><div class="prompt">'+item.q+'</div>'}
+  else if(wq.mode==='spell'){area.innerHTML='<p style="text-align:center;color:var(--soft);font-size:13px">Type the word matching this meaning:</p><div class="prompt" style="font:600 14px Nunito">'+item.q+'</div>'}
+  const input=document.createElement('input');input.type='text';input.placeholder='Type your answer…';input.id='wqInput';
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')checkWQ()});
+  area.append(input);
+  const btn=document.createElement('button');btn.className='btn green';btn.style.margin='10px auto 0';btn.style.display='block';btn.textContent='✓ Submit';
+  btn.onclick=checkWQ;area.append(btn);
+  setTimeout(()=>input.focus(),50);
+}
+function checkWQ(){
+  const input=$('#wqInput');if(!input||input.disabled)return;
+  const val=input.value.trim().toLowerCase();
+  const item=wq.items[wq.idx];if(!item)return;
+  const correct=item.a.toLowerCase();
+  const fb=$('#wqFeedback');
+  $$('#playArea button, #playArea input').forEach(x=>x.disabled=true);
+  if(val===correct){fb.textContent='✓ Correct! +10 XP';fb.className='feedback ok';wq.score+=1;addXP(1);$('#tutorMsg').textContent=tutorSay('correct')}
+  else{fb.textContent='✗ The answer was: '+item.a;fb.className='feedback no';$('#tutorMsg').textContent=tutorSay('wrong')+item.a+'. Remember it!'}
+  $('#wqScore').textContent='⭐ '+wq.score;
+  setTimeout(nextWQ,1600);
+}
+function nextWQ(){wq.idx++;if(wq.idx>=wq.items.length)endWQ();else renderWQ()}
+function renderMatch(area){
+  const items=wq.items;
+  $('#wqQnum').textContent='Match all '+items.length+' pairs';
+  $('#wqScore').textContent='⭐ '+wq.score;
+  $('#wqFeedback').textContent='Tap a term, then its meaning.';$('#wqFeedback').className='feedback';
+  const terms=shuffle(items.map((it,i)=>({label:it.term,id:i,type:'term'})));
+  const defs=shuffle(items.map((it,i)=>({label:it.def,id:i,type:'def'})));
+  const grid=document.createElement('div');grid.className='match-grid';grid.id='matchGrid';
+  shuffle([...terms,...defs]).forEach(it=>{const b=document.createElement('button');b.textContent=it.label;b.dataset.id=it.id;b.dataset.type=it.type;b.onclick=()=>matchTap(b);grid.append(b)});
+  area.append(grid);
+}
+function matchTap(btn){
+  if(btn.classList.contains('ok'))return;
+  if(!wq.matchSel){$$('#matchGrid button').forEach(x=>x.classList.remove('sel'));btn.classList.add('sel');wq.matchSel=btn;return}
+  if(wq.matchSel===btn){btn.classList.remove('sel');wq.matchSel=null;return}
+  const a=wq.matchSel,b=btn;
+  if(a.dataset.type!==b.dataset.type&&a.dataset.id===b.dataset.id){
+    a.classList.remove('sel');a.classList.add('ok');b.classList.add('ok');
+    wq.matchMatched++;wq.score+=1;addXP(1);$('#wqScore').textContent='⭐ '+wq.score;
+    $('#wqFeedback').textContent='✓ Match! +5 XP';$('#wqFeedback').className='feedback ok';
+    $('#tutorMsg').textContent=tutorSay('correct');wq.matchSel=null;
+    if(wq.matchMatched>=wq.items.length)setTimeout(endWQ,1200);
+  }else{
+    a.classList.add('no');b.classList.add('no');$('#wqFeedback').textContent='✗ Not a match';$('#wqFeedback').className='feedback no';
+    setTimeout(()=>{a.classList.remove('no','sel');b.classList.remove('no');wq.matchSel=null},700);
+  }
+}
+$('#wqHint').onclick=()=>{
+  if(wq.mode==='match'){$('#tutorMsg').textContent='Look for key words in the meaning that match a term.';return}
+  const item=wq.items[wq.idx];if(!item)return;
+  $('#tutorMsg').textContent='Hint: '+(item.hint||'Check your notes.');toast('Hint used');
+};
+$('#wqSkip').onclick=()=>{
+  if(wq.mode==='match'){endWQ();return}
+  const item=wq.items[wq.idx];
+  $('#tutorMsg').textContent='Skipped! Answer was: '+(item?item.a:'—');
+  nextWQ();
+};
+$('#wQuit').onclick=()=>endWQ(true);
+function endWQ(quit){
+  $('#wq-play').style.display='none';$('#wq-result').style.display='block';
+  const total=wq.mode==='match'?wq.items.length*1:wq.items.length*1;
+  $('#resultScore').textContent=wq.score+' / '+total+' points';
+  const pct=total?Math.round(wq.score/total*100):0;
+  $('#resultTitle').textContent=quit?'Round ended':'Round complete!';
+  $('#resultMsg').textContent=tutorSay('end')+(pct>=80?' You scored '+pct+'% — outstanding!':pct>=50?' You scored '+pct+'% — nice work!':' You scored '+pct+'% — keep practicing!');
+  if(!quit)addXP(1);
+}
+$('#playAgain').onclick=()=>startWQ(wq.mode);
+$('#newMode').onclick=()=>{$('#wq-result').style.display='none';$('#wq-mode').style.display='block';$('#ws3').classList.remove('on');$('#ws2').classList.add('on')};
+
+/* ===== GAME 02: MATH & SCIENCE ===== */
+const MATH_Q=[
+  ["What is 7 × 8?",["54","56","64","48"],1],["What is 144 ÷ 12?",["10","11","12","14"],2],
+  ["What is 15% of 200?",["20","25","30","35"],2],["What is 3/4 + 1/4?",["1","1/2","7/8","2"],0],
+  ["What is 2^5?",["16","25","32","64"],2],["What is √144?",["10","11","12","14"],2],
+  ["Angles in a triangle sum to?",["90°","180°","270°","360°"],1],["0.25 as a fraction?",["1/2","1/3","1/4","1/5"],2],
+  ["12 + 8 × 2 = ?",["28","40","20","32"],0],["-5 + 3 = ?",["-2","2","-8","8"],0],
+  ["Area of 6×4 rectangle?",["10","20","24","48"],2],["Circumference of a circle?",["πr²","2πr","πd²","2r"],1],
+  ["5! = ?",["25","60","120","720"],2],["20% off $80 = ?",["$60","$64","$70","$56"],1],
+  ["1 hour = ? seconds",["60","360","3600","6000"],2],["Next in 2,6,18,54?",["108","162","216","160"],1],
+  ["Median of 3,5,7,9,11?",["5","7","9","6"],1],["Mode of 2,2,3,4,4,4?",["2","3","4","6"],2],
+  ["1 km = ? m",["100","500","1000","10000"],2],["2x + 6 = 20, x = ?",["5","6","7","8"],2],
+  ["1/2 × 2/3 = ?",["1/3","2/5","1/6","3/5"],0],["0.5 × 0.5 = ?",["0.25","0.5","1","2.5"],0],
+  ["100 - 37 = ?",["63","73","57","67"],0],["9 × 12 = ?",["98","108","118","128"],1],
+  ["Which is prime?",["9","15","2","21"],2],["LCM of 4 and 6?",["8","10","12","24"],2],
+  ["GCF of 12 and 18?",["3","4","6","9"],2],["3^3 = ?",["9","18","27","81"],2],
+  ["Perimeter of square side 5?",["10","15","20","25"],2],["1/3 of 90 = ?",["20","25","30","35"],2],
+  ["2.5 × 4 = ?",["8","9","10","12"],2],["72 ÷ 9 = ?",["7","8","9","6"],1],
+  ["10^3 = ?",["100","1000","10000","30"],1],["5/10 = ?%",["5%","10%","50%","500%"],2],
+  ["If x=3, x²+2x = ?",["12","15","18","9"],1],["1 dozen = ?",["6","10","12","24"],2],
+  ["45 minutes = ? hours",["0.45","0.5","0.75","0.9"],2],["15 + 27 = ?",["42","32","52","41"],0]
+];
+const SCI_Q=[
+  ["Photosynthesis needs?",["Oxygen","Sunlight, CO2, water","Only water","Only soil"],1],
+  ["Powerhouse of the cell?",["Nucleus","Ribosome","Mitochondria","Vacuole"],2],
+  ["Water boils at?",["50°C","75°C","100°C","120°C"],2],["Closest planet to the sun?",["Venus","Mercury","Mars","Earth"],1],
+  ["Chemical symbol for gold?",["Go","Gd","Au","Ag"],2],["H2O is?",["Hydrogen","Oxygen","Water","Acid"],2],
+  ["Force pulling down?",["Magnetism","Gravity","Friction","Tension"],1],["Gas we breathe in?",["Carbon dioxide","Nitrogen","Oxygen","Helium"],2],
+  ["Gas plants absorb?",["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],2],["Largest human organ?",["Heart","Liver","Skin","Brain"],2],
+  ["Earth has how many moons?",["0","1","2","3"],1],["Solid, liquid, gas are?",["Elements","States of matter","Compounds","Mixtures"],1],
+  ["Speed of light ≈?",["300 km/s","3,000 km/s","300,000 km/s","3,000,000 km/s"],2],
+  ["Atom nucleus contains?",["Electrons only","Protons and neutrons","Protons only","Neutrons only"],1],
+  ["Which is the Red Planet?",["Venus","Jupiter","Mars","Saturn"],2],["Liquid to gas is?",["Freezing","Melting","Evaporation","Condensation"],2],
+  ["Unit of force?",["Joule","Watt","Newton","Pascal"],2],["Largest planet?",["Saturn","Jupiter","Neptune","Earth"],1],
+  ["Liquid metal at room temp?",["Iron","Mercury","Gold","Silver"],1],["Human heart chambers?",["2","3","4","5"],2],
+  ["pH of pure water?",["0","5","7","14"],2],["Study of living things?",["Physics","Chemistry","Biology","Geology"],2],
+  ["Sound travels fastest in?",["Air","Water","Solids","Vacuum"],2],["Earth rotates every?",["12 hours","24 hours","365 days","1 month"],1],
+  ["Rock from lava?",["Sedimentary","Metamorphic","Igneous","Mineral"],2],["Vitamin from sunlight?",["A","B","C","D"],3],
+  ["Most abundant gas in air?",["Oxygen","Carbon dioxide","Nitrogen","Hydrogen"],2],["Cell control center?",["Mitochondria","Nucleus","Ribosome","Membrane"],1],
+  ["Acid has pH?",["Above 7","Exactly 7","Below 7","14"],2],["Planet with rings?",["Mars","Venus","Saturn","Mercury"],2],
+  ["Light bending in water?",["Reflection","Refraction","Diffraction","Absorption"],1],["Basic unit of life?",["Atom","Molecule","Cell","Organ"],2],
+  ["Male part of flower?",["Pistil","Stamen","Petal","Sepal"],1],["Energy from sun?",["Wind","Solar","Hydro","Nuclear"],1],
+  ["Part of plant making food?",["Root","Stem","Leaf","Flower"],2],["Force opposing motion?",["Gravity","Friction","Tension","Buoyancy"],1],
+  ["Water cycle driven by?",["Moon","Sun","Wind","Tides"],1],["O₂ is?",["Ozone","Oxygen gas","Water","Carbon dioxide"],1]
+];
+let g2={qs:[],idx:0,score:0,subj:'Math'};
+$$('#g2Subj button').forEach(b=>b.onclick=()=>{$$('#g2Subj button').forEach(x=>x.classList.remove('on'));b.classList.add('on');g2.subj=b.dataset.subj});
+$('#g2Count').oninput=()=>{$('#g2CountVal').textContent=$('#g2Count').value};
+$('#g2Start').onclick=()=>{
+  let pool=[];
+  if(g2.subj==='Math')pool=MATH_Q.map(q=>({...q,cat:'Math'}));
+  else if(g2.subj==='Science')pool=SCI_Q.map(q=>({...q,cat:'Science'}));
+  else pool=[...MATH_Q.map(q=>({...q,cat:'Math'})),...SCI_Q.map(q=>({...q,cat:'Science'}))];
+  const n=Math.min(+$('#g2Count').value||10,35,pool.length);
+  g2={qs:shuffle(pool).slice(0,n),idx:0,score:0,subj:g2.subj};
+  $('#g2-setup').style.display='none';$('#g2-play').style.display='block';$('#g2-result').style.display='none';
+  renderG2();
+};
+function renderG2(){
+  const q=g2.qs[g2.idx];if(!q){endG2();return}
+  $('#g2Qnum').textContent='Q '+(g2.idx+1)+'/'+g2.qs.length+' · '+q.cat;
+  $('#g2Score').textContent='⭐ '+g2.score;
+  $('#g2Qtext').textContent=q[0];
+  $('#g2Feedback').textContent='';$('#g2Feedback').className='feedback';
+  const opts=$('#g2Opts');opts.innerHTML='';
+  q[1].forEach((o,i)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>{
+    $$('#g2Opts button').forEach(x=>x.disabled=true);
+    if(i===q[2]){b.className='ok';g2.score+=1;addXP(1);$('#g2Feedback').textContent='✓ Correct! +10';$('#g2Feedback').className='feedback ok'}
+    else{b.className='no';$$('#g2Opts button')[q[2]].className='ok';$('#g2Feedback').textContent='✗ Answer: '+q[1][q[2]];$('#g2Feedback').className='feedback no'}
+    $('#g2Score').textContent='⭐ '+g2.score;
+    setTimeout(()=>{g2.idx++;renderG2()},1400);
+  };opts.append(b)});
+}
+$('#g2Quit').onclick=()=>endG2(true);
+function endG2(quit){
+  $('#g2-play').style.display='none';$('#g2-result').style.display='block';
+  const total=g2.qs.length*1;
+  $('#g2ResultScore').textContent=g2.score+' / '+total;
+  const pct=total?Math.round(g2.score/total*100):0;
+  $('#g2ResultMsg').textContent=(quit?'Quiz ended. ':'')+(pct>=80?'Outstanding! '+pct+'%':pct>=50?'Good job! '+pct+'%':'Keep practicing! '+pct+'%')+' — come back tomorrow for a fresh set.';
+  if(!quit)addXP(1);
+}
+$('#g2Again').onclick=()=>{$('#g2-result').style.display='none';$('#g2-setup').style.display='block'};
+
+/* ===== STUDY LAB: 10 TECHNIQUES ===== */
+const TECHNIQUES=[
+  {id:'pomodoro',icon:'🍅',name:'Pomodoro Timer',desc:'Focus 25 min, rest 5. Customizable timer + printable tracker.',tutorType:'pomodoro'},
+  {id:'active',icon:'🧠',name:'Active Recall Reviewer',desc:'Generates review questions from your uploaded file. Up to 60.',tutorType:'active'},
+  {id:'spaced',icon:'🔁',name:'Spaced Repetition',desc:'Review schedule: 1d, 3d, 7d, 14d, 30d, 60d.',tutorType:'spaced'},
+  {id:'feynman',icon:'👩‍🏫',name:'Feynman Technique',desc:'Explain it simply. Where you stumble is what to review.',tutorType:'feynman'},
+  {id:'mindmap',icon:'🗺️',name:'Mind Mapping',desc:'Auto branch skeleton from your key terms. Printable template.',tutorType:'mindmap'},
+  {id:'sq3r',icon:'📖',name:'SQ3R Method',desc:'Survey, Question, Read, Recite, Review — guided worksheet.',tutorType:'sq3r'},
+  {id:'cornell',icon:'✍️',name:'Cornell Notes',desc:'Cues left, notes right, summary bottom. Cues from your file.',tutorType:'cornell'},
+  {id:'flashcards',icon:'🃏',name:'Flashcards (Leitner)',desc:'Auto cards from your file. Up to 60. Printable.',tutorType:'flashcards'},
+  {id:'blurting',icon:'💬',name:'Blurting Method',desc:'Read once, dump everything, compare, fill gaps. 10-min timer.',tutorType:'blurting'}
+];
+TECHNIQUES.forEach(t=>{
+  const d=document.createElement('details');
+  d.innerHTML='<summary>'+t.icon+' '+t.name+' <button class="tut-btn" data-tech="'+t.id+'">Open Tutor</button></summary><p>'+t.desc+'</p>';
+  $('#techList').append(d);
+});
+$$('[data-tech]').forEach(b=>b.onclick=e=>{e.stopPropagation();e.preventDefault();openTutor(b.dataset.tech)});
+
+/* TUTOR MODAL STATE */
+let activeTutor=null,tutorData={text:null,title:null,count:10,generated:null};
+let pomoTicker=null,blurtTicker=null;
+const modal=$('#tutorModal');
+$('#modalClose').onclick=closeModal;
+modal.onclick=e=>{if(e.target===modal)closeModal()};
+function closeModal(){modal.classList.remove('on');clearInterval(pomoTicker);clearInterval(blurtTicker)}
+function openTutor(id){
+  const t=TECHNIQUES.find(x=>x.id===id);if(!t)return;
+  activeTutor=t;
+  tutorData={text:currentTopic?currentTopic.raw:null,title:currentTopic?currentTopic.title:null,count:10,generated:null};
+  $('#modalTitle').innerHTML=t.icon+' '+t.name+' <span style="font:600 12px Nunito;color:var(--soft)">AI Tutor</span>';
+  const body=$('#modalBody');body.innerHTML='';
+  TUTOR_RENDER[t.tutorType](body);
+  modal.classList.add('on');
+}
+$('#modalRegen').onclick=()=>{if(activeTutor){const body=$('#modalBody');body.innerHTML='';TUTOR_RENDER[activeTutor.tutorType](body);toast('Regenerated!')}};
+$('#modalPdf').onclick=()=>{if(activeTutor){PDF_GEN[activeTutor.tutorType](activeTutor);addXP(1);toast('PDF downloaded! +10 XP')}};
+
+/* shared: dropzone + count selector in tutor body */
+function tutorUploadRow(body, onLoaded){
+  const wrap=document.createElement('div');
+  wrap.innerHTML='<div class="dropzone" id="dz"><div class="dz-icon">📄</div><p>Drag &amp; drop your PDF / Word / TXT here, or click to browse</p><p class="dz-status" style="color:var(--pink)"></p></div><div class="count-row"><label>Questions (1–60):</label><input type="range" id="tutCount" min="1" max="60" value="10"><span class="count-val" id="tutCountVal">10</span></div>';
+  body.append(wrap);
+  const dz=wrap.querySelector('#dz');
+  const countInput=wrap.querySelector('#tutCount'),countVal=wrap.querySelector('#tutCountVal');
+  countInput.oninput=()=>{countVal.textContent=countInput.value;tutorData.count=+countInput.value;if(tutorData.text)onLoaded()};
+  setupDropzone(dz,(text,name)=>{tutorData.text=text;tutorData.title=name;if(!currentTopic){currentTopic={title:name,raw:text};try{localStorage.setItem('mom-topic',JSON.stringify(currentTopic))}catch(e){}}onLoaded()});
+  if(tutorData.text){wrap.querySelector('.dz-status').textContent='Using saved topic: '+(tutorData.title||'My Topic')+' — upload a new one to replace it.';onLoaded()}
+}
+
+/* ---- Pomodoro ---- */
+function renderPomodoro(body){
+  body.innerHTML='<h3>⚙️ Customize your focus session</h3><div class="pomo-settings"><label>Focus (min)<input type="number" id="pomoWork" value="25" min="1" max="90"></label><label>Short break (min)<input type="number" id="pomoBreak" value="5" min="1" max="30"></label><label>Long break (min)<input type="number" id="pomoLong" value="15" min="1" max="60"></label><label>Rounds<input type="number" id="pomoRounds" value="4" min="1" max="8"></label></div><div class="pomo-phase" id="pomoPhase">Ready to focus</div><div class="pomodoro-display" id="pomoClock">25:00</div><div class="pomo-controls"><button class="btn green" id="pomoStart">▶ Start</button><button class="btn alt" id="pomoPause">⏸ Pause</button><button class="btn alt" id="pomoReset">↺ Reset</button></div><p style="margin-top:12px">📄 PDF = printable tracker sheet with session log.</p>';
+  let work=25,brk=5,long=15,rounds=4,curRound=0,phase='work',remaining=1500,running=false;
+  const clock=$('#pomoClock'),phaseEl=$('#pomoPhase');
+  const apply=()=>{work=+$('#pomoWork').value||25;brk=+$('#pomoBreak').value||5;long=+$('#pomoLong').value||15;rounds=+$('#pomoRounds').value||4};
+  const disp=()=>{clock.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0')};
+  $('#pomoStart').onclick=()=>{if(running)return;apply();running=true;phaseEl.textContent=phase==='work'?('🔴 Focus round '+(curRound+1)+'/'+rounds):('🟢 Break');clearInterval(pomoTicker);pomoTicker=setInterval(()=>{remaining--;disp();if(remaining<=0){running=false;clearInterval(pomoTicker);if(phase==='work'){curRound++;addXP(1);toast('Focus round done! +20 XP');if(curRound>=rounds){phase='break';remaining=long*60;curRound=0;phaseEl.textContent='🎉 Long break!'}else{phase='break';remaining=brk*60;phaseEl.textContent='🟢 Short break — stretch!'}}else{phase='work';remaining=work*60;phaseEl.textContent='🔴 Focus round '+(curRound+1)+'/'+rounds}disp();$('#pomoStart').click()}},1000)};
+  $('#pomoPause').onclick=()=>{running=false;clearInterval(pomoTicker);phaseEl.textContent='⏸ Paused'};
+  $('#pomoReset').onclick=()=>{running=false;clearInterval(pomoTicker);apply();phase='work';curRound=0;remaining=work*60;phaseEl.textContent='Ready to focus';disp()};
+  disp();
+}
+/* ---- Active Recall (ANSWERABLE) ---- */
+function renderActive(body){
+  let got=0,rev=0;
+  tutorUploadRow(body,()=>{
+    const data=processTopic(tutorData.text,tutorData.title,tutorData.count);
+    got=0;rev=0;
+    let area=body.querySelector('.gen-area');if(!area){area=document.createElement('div');area.className='gen-area';body.append(area)}
+    area.innerHTML='<b>📝 '+data.questions.length+' reviewer questions from: '+data.title+'</b><br><small style="color:var(--soft)">Type your answer, reveal the reference, then self-assess.</small><div class="qa-score" id="arScore">Got it: 0 · Review: 0</div>';
+    data.questions.forEach((q,i)=>{
+      const div=document.createElement('div');div.className='qa-item';
+      div.innerHTML='<b>Q'+(i+1)+'. '+q.q+'</b><br><small style="color:var(--soft)">Hint: '+q.hint+'</small>'+
+        '<textarea class="qa-answer" placeholder="Type your answer here…" rows="2"></textarea>'+
+        '<div class="qa-ref">📖 Reference: '+q.a+'</div>'+
+        '<div class="qa-btns"><button class="qa-reveal">👁 Reveal reference</button><button class="qa-got">✓ Got it</button><button class="qa-rev">↻ Review later</button></div>';
+      const ref=div.querySelector('.qa-ref');
+      div.querySelector('.qa-reveal').onclick=()=>ref.classList.toggle('show');
+      div.querySelector('.qa-got').onclick=()=>{if(!div.dataset.done){div.dataset.done='1';div.classList.add('done-got');got++;addXP(1);upd()}};
+      div.querySelector('.qa-rev').onclick=()=>{if(!div.dataset.done){div.dataset.done='1';div.classList.add('done-rev');rev++;upd()}};
+      area.append(div);
+    });
+    function upd(){const s=area.querySelector('#arScore');if(s)s.textContent='Got it: '+got+' · Review: '+rev}
+    tutorData.generated=data;
+  });
+}
+/* ---- Spaced Repetition (interactive checkboxes) ---- */
+function renderSpaced(body){
+  const today=new Date();
+  const rows=[1,3,7,14,30,60,90].map(d=>{const dt=new Date(today);dt.setDate(dt.getDate()+d);return {d:d,label:dt.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}});
+  body.innerHTML='<h3>📅 Review schedule (forgetting curve)</h3><p>Topic: <b>'+(tutorData.title||(currentTopic?currentTopic.title:'________________'))+'</b>. Tap checkboxes as you complete reviews (saved on this device).</p><div class="gen-area" id="spacedArea"></div><p style="margin-top:10px">📄 PDF = printable checklist.</p>';
+  const area=body.querySelector('#spacedArea');
+  const key='mom-spaced-'+(tutorData.title||'default');
+  let done=[];try{done=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
+  rows.forEach((r,i)=>{
+    const lab=document.createElement('label');lab.className='quest';lab.style.display='flex';
+    lab.innerHTML='<input type="checkbox"'+(done.includes(i)?' checked':'')+'> <span>Day +'+r.d+' · '+r.label+' — Review topic</span>';
+    lab.querySelector('input').onchange=e=>{
+      if(e.target.checked){if(!done.includes(i)){done.push(i);addXP(1)}}else{done=done.filter(x=>x!==i)}
+      try{localStorage.setItem(key,JSON.stringify(done))}catch(err){}
+    };
+    area.append(lab);
+  });
+}
+/* ---- Feynman (editable) ---- */
+function renderFeynman(body){
+  tutorUploadRow(body,()=>{
+    const data=processTopic(tutorData.text,tutorData.title,5);
+    let area=body.querySelector('.gen-area');if(!area){area=document.createElement('div');area.className='gen-area';body.append(area)}
+    const steps=[['Step 1 — Teach it to a 10-year-old','Simple words only. Key concepts: '+data.keyTerms.slice(0,5).map(k=>k.term).join(', ')],['Step 2 — Identify gaps','Where did you stumble? Those are weak spots.'],['Step 3 — Go back to source','Re-learn the gaps, try again.'],['Step 4 — Simplify + analogy','It is like… because…']];
+    area.innerHTML='<b>👶 Feynman: '+data.title+'</b>';
+    steps.forEach(([t,d])=>{
+      const div=document.createElement('div');div.style.marginTop='10px';
+      div.innerHTML='<b>'+t+'</b><br><small style="color:var(--soft)">'+d+'</small><textarea class="qa-answer" rows="2" placeholder="Write here…"></textarea>';
+      area.append(div);
+    });
+    area.innerHTML+='<div class="edit-save">✓ Type directly — your work stays in the panel</div>';
+    tutorData.generated=data;
+  });
+}
+/* ---- Mind Map (INTERACTIVE — editable branches) ---- */
+function renderMindmap(body){
+  tutorUploadRow(body,()=>{
+    const data=processTopic(tutorData.text,tutorData.title,6);
+    let area=body.querySelector('.gen-area');if(!area){area=document.createElement('div');area.className='gen-area';body.append(area)}
+    const branches=data.keyTerms.slice(0,6).map(k=>k.term);
+    area.innerHTML='<b>🗺️ Interactive Mind Map — click any text to edit, add or remove branches</b><div class="mm-edit"><div class="mm-center-edit"><input id="mmCenter" value="'+data.title.replace(/"/g,'&quot;')+'"></div><div class="mm-branches-edit" id="mmBranches"></div><button class="mm-add" id="mmAdd">＋ Add branch</button></div>';
+    const bArea=area.querySelector('#mmBranches');
+    function renderBranches(){
+      bArea.innerHTML='';
+      branches.forEach((b,i)=>{
+        const row=document.createElement('div');row.className='mm-branch-edit';
+        const inp=document.createElement('input');inp.value=b;
+        inp.oninput=e=>{branches[i]=e.target.value};
+        const del=document.createElement('button');del.textContent='✕';del.title='Remove';
+        del.onclick=()=>{branches.splice(i,1);renderBranches()};
+        row.append(inp,del);bArea.append(row);
+      });
+    }
+    renderBranches();
+    area.querySelector('#mmAdd').onclick=()=>{if(branches.length<10){branches.push('New branch');renderBranches()}};
+    tutorData.generated=data;
+  });
+}
+/* ---- SQ3R (editable) ---- */
+function renderSq3r(body){
+  const topic=tutorData.title||(currentTopic?currentTopic.title:'________________');
+  body.innerHTML='<h3>📖 SQ3R Guided Worksheet</h3><p>Topic: <b>'+topic+'</b> — type directly into each section.</p><div class="gen-area"></div><p style="margin-top:10px">📄 PDF = printable 5-section worksheet.</p>';
+  const area=body.querySelector('.gen-area');
+  [['S — SURVEY','Skim headings, charts, summary. What stands out?'],['Q — QUESTION','Turn headings into questions you want answered.'],['R — READ','Read to answer them. Jot key points.'],['R — RECITE','Close book. Say it aloud in your own words.'],['R — REVIEW','Re-read notes. Quiz yourself. What gaps remain?']].forEach(([t,d])=>{
+    const div=document.createElement('div');div.style.marginTop='10px';
+    div.innerHTML='<b>'+t+'</b><br><small style="color:var(--soft)">'+d+'</small><textarea class="qa-answer" rows="3" placeholder="Write here…"></textarea>';
+    area.append(div);
+  });
+}
+/* ---- Cornell Notes (INTERACTIVE — 3 editable regions, auto-save) ---- */
+function renderCornell(body){
+  tutorUploadRow(body,()=>{
+    const data=processTopic(tutorData.text,tutorData.title,8);
+    let area=body.querySelector('.gen-area');if(!area){area=document.createElement('div');area.className='gen-area';body.append(area)}
+    const cues=data.keyTerms.slice(0,8).map(k=>'• '+k.term+'?').join('\n');
+    area.innerHTML='<b>✍️ Cornell Notes — '+data.title+' (editable, auto-saved)</b><div class="cornell-labels"><span>Cues / Questions</span><span>Notes</span></div><div class="cornell-grid"><textarea id="cnCues" rows="10" placeholder="Cues / key terms…"></textarea><textarea id="cnNotes" rows="10" placeholder="Your notes here…"></textarea></div><textarea class="cornell-summary" id="cnSummary" placeholder="Summary (2 sentences)…"></textarea><div class="edit-save">✓ Auto-saves as you type</div>';
+    const key='mom-cornell-'+data.title;
+    let saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+    const cEl=area.querySelector('#cnCues'),nEl=area.querySelector('#cnNotes'),sEl=area.querySelector('#cnSummary');
+    cEl.value=saved?(saved.cues||cues):cues;nEl.value=saved?(saved.notes||''):'';sEl.value=saved?(saved.summary||''):'';
+    const save=()=>{try{localStorage.setItem(key,JSON.stringify({cues:cEl.value,notes:nEl.value,summary:sEl.value}))}catch(e){}};
+    cEl.oninput=save;nEl.oninput=save;sEl.oninput=save;
+    tutorData.generated=data;
+  });
+}
+/* ---- Flashcards (ANSWERABLE — Leitner self-assess) ---- */
+function renderFlashcards(body){
+  let known=0,again=0;
+  tutorUploadRow(body,()=>{
+    const data=processTopic(tutorData.text,tutorData.title,tutorData.count);
+    known=0;again=0;
+    let area=body.querySelector('.gen-area');if(!area){area=document.createElement('div');area.className='gen-area';body.append(area)}
+    if(!data.keyTerms.length){area.innerHTML='<p>Not enough content. Try a longer file.</p>';return}
+    let ci=0;
+    area.innerHTML='<p><b>🃏 '+data.keyTerms.length+' flashcards</b> — tap to flip, then self-assess.</p><div class="flashcard" id="fcCard"><div class="flashcard-inner"><div class="fc-face fc-front" id="fcFront">'+data.keyTerms[0].term+'</div><div class="fc-face fc-back" id="fcBack">'+data.keyTerms[0].context+'</div></div></div><div class="fc-nav"><button class="btn alt" id="fcPrev" style="padding:4px 12px;font-size:12px">‹ Prev</button><span id="fcCount">1/'+data.keyTerms.length+'</span><button class="btn alt" id="fcNext" style="padding:4px 12px;font-size:12px">Next ›</button></div><div class="qa-btns" style="justify-content:center;margin-top:10px"><button class="qa-got" id="fcGot">✓ I know it</button><button class="qa-rev" id="fcAgain">↻ Again</button></div><div class="qa-score" id="fcScore">Known: 0 · Again: 0</div>';
+    const card=area.querySelector('#fcCard');card.onclick=()=>card.classList.toggle('flipped');
+    const fEl=area.querySelector('#fcFront'),bEl=area.querySelector('#fcBack'),cEl=area.querySelector('#fcCount'),sEl=area.querySelector('#fcScore');
+    const show=()=>{card.classList.remove('flipped');setTimeout(()=>{fEl.textContent=data.keyTerms[ci].term;bEl.textContent=data.keyTerms[ci].context;cEl.textContent=(ci+1)+'/'+data.keyTerms.length},200)};
+    const upd=()=>{sEl.textContent='Known: '+known+' · Again: '+again};
+    const next=()=>{ci=(ci+1)%data.keyTerms.length;show()};
+    area.querySelector('#fcNext').onclick=e=>{e.stopPropagation();next()};
+    area.querySelector('#fcPrev').onclick=e=>{e.stopPropagation();ci=(ci-1+data.keyTerms.length)%data.keyTerms.length;show()};
+    area.querySelector('#fcGot').onclick=e=>{e.stopPropagation();known++;addXP(1);upd();next()};
+    area.querySelector('#fcAgain').onclick=e=>{e.stopPropagation();again++;upd();next()};
+    tutorData.generated=data;
+  });
+}
+/* ---- Blurting (editable + timer) ---- */
+function renderBlurting(body){
+  const topic=tutorData.title||(currentTopic?currentTopic.title:'________________');
+  body.innerHTML='<h3>💬 Blurting Method</h3><p>Topic: <b>'+topic+'</b>. Read once → 10-min timer → dump everything below → compare → fill gaps.</p><div class="gen-area"><b>Timer:</b> <span id="blurtClock" style="font:800 20px Baloo 2;color:var(--pink)">10:00</span> <button class="btn alt" id="blurtGo" style="padding:4px 12px;font-size:12px;margin-left:8px">Start blurting!</button><textarea class="qa-answer" id="blurtArea" rows="8" placeholder="Dump EVERYTHING you remember here…" style="margin-top:10px"></textarea><b style="display:block;margin-top:10px">Gaps I missed (re-learn these):</b><textarea class="qa-answer" rows="3" placeholder="Write gaps here…"></textarea></div><p style="margin-top:10px">📄 PDF = printable blurting worksheet.</p>';
+  $('#blurtGo').onclick=()=>{let s=600;const el=$('#blurtClock');clearInterval(blurtTicker);blurtTicker=setInterval(()=>{s--;el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(s<=0){clearInterval(blurtTicker);el.textContent='⏰ Time!';addXP(1);toast('Blurting done! +15 XP')}},1000)};
+}
+const TUTOR_RENDER={pomodoro:renderPomodoro,active:renderActive,spaced:renderSpaced,feynman:renderFeynman,mindmap:renderMindmap,sq3r:renderSq3r,cornell:renderCornell,flashcards:renderFlashcards,blurting:renderBlurting};
+
+/* ===== PDF GENERATORS ===== */
+function newPdf(title){
+  if(!window.jspdf){toast('PDF library loading… try again');return null}
+  const doc=new window.jspdf.jsPDF({unit:'pt',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  doc.setFillColor(47,155,242);doc.rect(0,0,W,60,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
+  doc.text(title,40,38);
+  doc.setTextColor(28,39,100);doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Mind Over Milestones · AI Study Tutor · '+new Date().toLocaleDateString(),40,78);
+  doc.setDrawColor(191,227,255);doc.line(40,88,W-40,88);
+  return {doc:doc,W:W,y:105};
+}
+function pdfLines(p,n,gap){for(let i=0;i<n;i++){p.doc.setDrawColor(200,220,245);p.doc.line(40,p.y,p.W-40,p.y);p.y+=gap}}
+function pdfWrap(p,text,size){p.doc.setFontSize(size);const lines=p.doc.splitTextToSize(text,p.W-80);lines.forEach(l=>{p.doc.text(l,40,p.y);p.y+=size+4})}
+function checkPage(p){if(p.y>p.W-80){p.doc.addPage();p.y=60}}
+const PDF_GEN={
+  pomodoro(t){const p=newPdf('Pomodoro Focus Tracker');if(!p)return;pdfWrap(p,'Topic: ___________________________',12);p.y+=10;p.doc.setFont('helvetica','bold');p.doc.text('Session Log',40,p.y);p.y+=24;p.doc.setFontSize(10);p.doc.setFont('helvetica','normal');for(let i=1;i<=8;i++){checkPage(p);p.doc.setDrawColor(191,227,255);p.doc.rect(40,p.y-12,p.W-80,28);p.doc.text('Round '+i,48,p.y+4);p.doc.text('Start: ______  End: ______  Distractions: ___  Focus (1-5): ___',130,p.y+4);p.y+=34}p.doc.save('pomodoro-tracker.pdf')},
+  active(t){const p=newPdf('Active Recall Reviewer');if(!p)return;const data=tutorData.generated||(tutorData.text?processTopic(tutorData.text,tutorData.title,tutorData.count):null);const qs=data?data.questions:Array.from({length:10},(_,i)=>({q:'Review question '+(i+1),hint:'Write from memory, then check notes.'}));pdfWrap(p,'Topic: '+(data?data.title:'___________________________'),12);p.y+=8;pdfWrap(p,'Instructions: Answer from memory (no notes!). Check after. Star the ones you miss.',10);p.y+=10;qs.forEach((q,i)=>{checkPage(p);p.doc.setFont('helvetica','bold');p.doc.setFontSize(11);p.doc.text('Q'+(i+1)+'. '+q.q,40,p.y,{maxWidth:p.W-80});p.y+=18;p.doc.setFont('helvetica','normal');p.doc.setFontSize(9);p.doc.setTextColor(100,120,170);p.doc.text('Hint: '+(q.hint||'Check your notes.'),44,p.y,{maxWidth:p.W-90});p.y+=16;p.doc.setTextColor(28,39,100);pdfLines(p,3,22);p.y+=8});p.doc.save('active-recall-reviewer.pdf')},
+  spaced(t){const p=newPdf('Spaced Repetition Plan');if(!p)return;pdfWrap(p,'Topic: '+(tutorData.title||'___________________________'),12);p.y+=14;const today=new Date();p.doc.setFont('helvetica','bold');p.doc.setFontSize(11);p.doc.text('Interval',40,p.y);p.doc.text('Date',160,p.y);p.doc.text('Task',260,p.y);p.y+=16;p.doc.setFont('helvetica','normal');p.doc.setFontSize(10);[1,3,7,14,30,60,90].forEach(d=>{checkPage(p);const dt=new Date(today);dt.setDate(dt.getDate()+d);p.doc.setDrawColor(191,227,255);p.doc.line(40,p.y-6,p.W-40,p.y-6);p.doc.text('Day +'+d,40,p.y+6);p.doc.text(dt.toLocaleDateString([],{month:'short',day:'numeric'}),160,p.y+6);p.doc.text('[ ] Review '+(tutorData.title||'topic'),260,p.y+6);p.y+=28});p.doc.save('spaced-repetition-plan.pdf')},
+  feynman(t){const p=newPdf('Feynman Technique Worksheet');if(!p)return;pdfWrap(p,'Concept: '+(tutorData.title||'___________________________'),12);p.y+=14;[['Step 1 — Teach it to a 10-year-old','Simple words only. No jargon.'],['Step 2 — Identify gaps','Where did you stumble? Those are weak spots.'],['Step 3 — Go back to source','Re-learn the gaps, try again.'],['Step 4 — Simplify + analogy','It is like… because…']].forEach(([tt,d])=>{checkPage(p);p.doc.setFont('helvetica','bold');p.doc.setFontSize(12);p.doc.text(tt,40,p.y);p.y+=16;p.doc.setFont('helvetica','normal');p.doc.setFontSize(10);p.doc.setTextColor(100,120,170);p.doc.text(d,40,p.y);p.y+=16;p.doc.setTextColor(28,39,100);pdfLines(p,4,24);p.y+=10});p.doc.save('feynman-worksheet.pdf')},
+  mindmap(t){const p=newPdf('Mind Map Template');if(!p)return;const data=tutorData.generated||(tutorData.text?processTopic(tutorData.text,tutorData.title,6):null);const center=data?data.title:'YOUR TOPIC';const branches=data?data.keyTerms.slice(0,6).map(k=>k.term):['Branch 1','Branch 2','Branch 3','Branch 4','Branch 5','Branch 6'];const cx=p.W/2,cy=320;p.doc.setFillColor(47,155,242);p.doc.roundedRect(cx-90,cy-22,180,44,10,10,'F');p.doc.setTextColor(255,255,255);p.doc.setFontSize(13);p.doc.setFont('helvetica','bold');p.doc.text(center,cx,cy+5,{align:'center',maxWidth:170});p.doc.setTextColor(28,39,100);[-60,-30,0,30,60,90].map(a=>a*Math.PI/180).forEach((ang,i)=>{const bx=cx+Math.cos(ang)*170,by=cy+Math.sin(ang)*140;p.doc.setDrawColor(47,155,242);p.doc.setLineWidth(2);p.doc.line(cx,cy,bx,by);p.doc.setLineWidth(1);p.doc.setFillColor(211,228,255);p.doc.roundedRect(bx-60,by-16,120,32,8,8,'F');p.doc.setFontSize(9);p.doc.text(branches[i%branches.length]||'',bx,by+3,{align:'center',maxWidth:110})});p.y=520;pdfWrap(p,'Add your own sub-branches, colors, and doodles.',10);p.doc.save('mind-map-template.pdf')},
+  sq3r(t){const p=newPdf('SQ3R Worksheet');if(!p)return;pdfWrap(p,'Topic: '+(tutorData.title||'___________________________'),12);p.y+=14;[['S — SURVEY','Skim headings, charts, summary.'],['Q — QUESTION','Turn headings into questions.'],['R — READ','Read to answer. Jot key points.'],['R — RECITE','Close book. Say it aloud.'],['R — REVIEW','Re-read notes. Quiz yourself.']].forEach(([tt,d])=>{checkPage(p);p.doc.setFont('helvetica','bold');p.doc.setFontSize(12);p.doc.text(tt,40,p.y);p.y+=16;p.doc.setFont('helvetica','normal');p.doc.setFontSize(10);p.doc.setTextColor(100,120,170);p.doc.text(d,40,p.y);p.y+=16;p.doc.setTextColor(28,39,100);pdfLines(p,3,22);p.y+=10});p.doc.save('sq3r-worksheet.pdf')},
+  cornell(t){const p=newPdf('Cornell Notes');if(!p)return;const data=tutorData.generated||(tutorData.text?processTopic(tutorData.text,tutorData.title,8):null);pdfWrap(p,'Topic: '+(data?data.title:'___________________________'),12);p.y+=10;const cueW=140,topY=p.y,noteH=420;p.doc.setDrawColor(47,155,242);p.doc.setLineWidth(1.5);p.doc.rect(40,topY,cueW,noteH);p.doc.rect(40+cueW,topY,p.W-80-cueW,noteH);p.doc.rect(40,topY+noteH,p.W-80,60);p.doc.setFont('helvetica','bold');p.doc.setFontSize(10);p.doc.text('CUES / QUESTIONS',48,topY+16);p.doc.text('NOTES',40+cueW+8,topY+16);p.doc.text('SUMMARY (2 sentences):',48,topY+noteH+18);if(data){p.doc.setFont('helvetica','normal');p.doc.setFontSize(9);p.doc.setTextColor(100,120,170);data.keyTerms.slice(0,8).forEach((k,i)=>{p.doc.text('• '+k.term+'?',48,topY+36+i*16)});p.doc.setTextColor(28,39,100)}p.doc.save('cornell-notes.pdf')},
+  flashcards(t){const p=newPdf('Printable Flashcards');if(!p)return;const data=tutorData.generated||(tutorData.text?processTopic(tutorData.text,tutorData.title,tutorData.count):null);const cards=data?data.keyTerms.slice(0,Math.min(tutorData.count,60)):Array.from({length:8},(_,i)=>({term:'Term '+(i+1),context:'Definition here'}));const cw=(p.W-80-20)/2,ch=130;cards.forEach((c,i)=>{const col=i%2,row=Math.floor(i/2)%2;if(i>0&&i%4===0){p.doc.addPage();p.y=60}const x=40+col*(cw+20),y=60+row*(ch+20);p.doc.setDrawColor(47,155,242);p.doc.setLineDash([4,3]);p.doc.rect(x,y,cw,ch);p.doc.setLineDash([]);p.doc.setFont('helvetica','bold');p.doc.setFontSize(11);p.doc.text(c.term,x+10,y+24,{maxWidth:cw-20});p.doc.setFont('helvetica','normal');p.doc.setFontSize(8);p.doc.setTextColor(100,120,170);p.doc.text((c.context||'').slice(0,120),x+10,y+44,{maxWidth:cw-20});p.doc.setTextColor(28,39,100)});p.doc.save('flashcards.pdf')},
+  blurting(t){const p=newPdf('Blurting Worksheet');if(!p)return;pdfWrap(p,'Topic: '+(tutorData.title||'___________________________'),12);p.y+=14;pdfWrap(p,'Read once → 10-min timer → write EVERYTHING you remember → compare with notes → rewrite gaps.',10);p.y+=14;p.doc.setFont('helvetica','bold');p.doc.setFontSize(12);p.doc.text('Everything I remember:',40,p.y);p.y+=20;pdfLines(p,12,24);p.y+=10;p.doc.setFont('helvetica','bold');p.doc.setFontSize(12);p.doc.text('Gaps I missed:',40,p.y);p.y+=20;pdfLines(p,5,24);p.doc.save('blurting-worksheet.pdf')},
+};
+</script>
+</body>
+</html>
