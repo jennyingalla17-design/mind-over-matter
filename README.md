@@ -3,7 +3,7 @@
 A student learning & wellness web app — built for senior high students.
 
 ## 🌟 Live Site
-**https://jennyingalla17-design.github.io/Mind Over Matter/**
+**https://jennyingalla17-design.github.io/mind-over-matter/**
 
 ## ✨ Features
 - 🎮 **Game 01 — Word Quest**: upload any PDF/Word/TXT, AI generates questions (scramble, cloze, spell, match)
